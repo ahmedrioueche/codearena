@@ -1,93 +1,141 @@
 export const dict = {
-  "en": {
-    "app": {
-      "name": "Code Arena",
-      "description": "A web application for code battles and collabs",
-      "allRightsReserved": "All rights reserved"
+  en: {
+    app: {
+      name: "My Web Application",
+      description: "A sample web application",
+      version: "1.0.0",
+      copyright: "© 2023 My Company",
+      url: "https://www.example.com",
+      supportEmail: "support@example.com",
+      allRightsReserved: "app.allRightsReserved",
     },
-    "auth": {
-      "login": {
-        "title": "Login",
-        "usernameLabel": "Username",
-        "passwordLabel": "Password",
-        "loginButton": "Login",
-        "forgotPassword": "Forgot Password?",
-        "rememberMe": "Remember Me"
+    auth: {
+      login: {
+        title: "Login",
+        usernameLabel: "Username",
+        passwordLabel: "Password",
+        loginButton: "Login",
+        forgotPassword: "Forgot Password?",
+        successMessage: "Login successful!",
+        errorMessage: "Invalid username or password.",
       },
-      "registration": {
-        "title": "Register",
-        "usernameLabel": "Username",
-        "emailLabel": "Email",
-        "passwordLabel": "Password",
-        "confirmPasswordLabel": "Confirm Password",
-        "registerButton": "Register"
+      register: {
+        title: "Register",
+        usernameLabel: "Username",
+        emailLabel: "Email",
+        passwordLabel: "Password",
+        confirmPasswordLabel: "Confirm Password",
+        registerButton: "Register",
+        successMessage: "Registration successful!",
+        errorMessage: "Registration failed.",
       },
-      "passwordReset": {
-        "title": "Password Reset",
-        "emailLabel": "Email",
-        "resetPasswordButton": "Reset Password",
-        "successMessage": "Password reset instructions sent to your email."
+      passwordReset: {
+        title: "Password Reset",
+        emailLabel: "Email",
+        resetPasswordButton: "Reset Password",
+        successMessage: "Password reset email sent!",
+        errorMessage: "Email not found.",
       },
-      "errorMessages": {
-        "invalidCredentials": "Invalid username or password.",
-        "userNotFound": "User not found.",
-        "passwordMismatch": "Passwords do not match.",
-        "emailInUse": "Email address is already in use."
-      }
-    },
-    "user": {
-      "profile": {
-        "title": "Profile",
-        "usernameLabel": "Username",
-        "emailLabel": "Email",
-        "firstNameLabel": "First Name",
-        "lastNameLabel": "Last Name",
-        "updateButton": "Update Profile"
+      logout: {
+        button: "Logout",
       },
-      "settings": {
-        "title": "Settings",
-        "languageLabel": "Language",
-        "themeLabel": "Theme",
-        "notificationsLabel": "Notifications"
+    },
+    user: {
+      profile: {
+        title: "Profile",
+        usernameLabel: "Username",
+        emailLabel: "Email",
+        firstNameLabel: "First Name",
+        lastNameLabel: "Last Name",
+        updateButton: "Update Profile",
+        successMessage: "Profile updated successfully!",
+        errorMessage: "Error updating profile.",
       },
-      "roles": [
-        "admin",
-        "editor",
-        "viewer"
-      ]
+      settings: {
+        title: "Settings",
+        languageLabel: "Language",
+        themeLabel: "Theme",
+        notificationsLabel: "Notifications",
+        saveButton: "Save Settings",
+        successMessage: "Settings saved successfully!",
+        errorMessage: "Error saving settings.",
+      },
+      roles: ["admin", "user", "guest"],
+      status: ["active", "inactive"],
     },
-    "actions": {
-      "create": "Create",
-      "read": "Read",
-      "update": "Update",
-      "delete": "Delete",
-      "submit": "Submit",
-      "cancel": "Cancel",
-      "save": "Save",
-      "search": "Search",
-      "filter": "Filter",
-      "sort": "Sort"
+    actions: {
+      create: "Create",
+      read: "Read",
+      update: "Update",
+      delete: "Delete",
+      submit: "Submit",
+      cancel: "Cancel",
+      save: "Save",
+      edit: "Edit",
+      view: "View",
+      search: "Search",
     },
-    "navigation": {
-      "home": "Home",
-      "dashboard": "Dashboard",
-      "profile": "Profile",
-      "settings": "Settings",
-      "logout": "Logout"
+    navigation: {
+      home: "Home",
+      profile: "Profile",
+      settings: "Settings",
+      dashboard: "Dashboard",
+      about: "About",
+      contact: "Contact",
     },
-    "ui": {
-      "loading": "Loading...",
-      "error": "Error!",
-      "success": "Success!",
-      "noData": "No data available.",
-      "back": "Back",
-      "next": "Next",
-      "previous": "Previous"
+    errors: {
+      "404": "Page not found",
+      "500": "Internal server error",
+      unauthorized: "Unauthorized access",
+      forbidden: "Forbidden",
     },
-    "codeEditor": {
-      "title": "Code editor",
-      "placeholder": "Default text"
+    ui: {
+      loading: "Loading...",
+      empty: "No data available",
+      back: "Back",
+      next: "Next",
+      previous: "Previous",
+      confirm: "Confirm",
     },
-    "tsx": "tsx"
-  }
+    data: {
+      table: {
+        noData: "No data available in table",
+        searchPlaceholder: "Search...",
+        perPage: "Items per page",
+      },
+      pagination: {
+        first: "First",
+        last: "Last",
+        previous: "Previous",
+        next: "Next",
+      },
+    },
+    notifications: {
+      successPrefix: "Success: ",
+      errorPrefix: "Error: ",
+      warningPrefix: "Warning: ",
+      infoPrefix: "Info: ",
+    },
+    profile: {
+      picture: "Profile Picture",
+      bio: "Bio",
+      location: "Location",
+      website: "Website",
+      socialLinks: "Social Links",
+      contactInfo: "Contact Information",
+    },
+    problem: {
+      codeExample: "Code example",
+      hints: "hints",
+    },
+    codeEditor: {
+      placeholder: "Code goes here",
+      lines: "lines",
+      characters: "characters",
+    },
+    stats: {
+      overall: "overall",
+      detailed: "Detailed",
+    },
+  },
 };

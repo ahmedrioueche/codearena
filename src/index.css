@@ -7,6 +7,15 @@
   --foreground: #171717;
 }
 
+/* Ensure the body and html have full height */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 @font-face {
   font-family: "STIX Two Text";
   src: url("/fonts/STIXTwoText-VariableFont_wght.ttf") format("truetype");
@@ -75,19 +84,40 @@ body {
 }
 
 /*------scroll-bar-------------*/
+/* Light Mode (Default) */
+:root {
+  --scrollbar-track: #f2faf4;
+  --scrollbar-thumb: #452fab;
+}
+
+/* Dark Mode */
+.dark {
+  --scrollbar-track: #0d1117; /* Change to match your dark bg */
+  --scrollbar-thumb: #452fab; /* Adjust for dark mode */
+}
+
+/* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 7px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #007bff;
+  background-color: var(--scrollbar-thumb);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #f0f0f0;
+  background-color: var(--scrollbar-track);
 }
 
-::-webkit-scrollbar-corner {
-  background-color: #fff;
+/* Hide the spinner arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Disable scrollbar during resize */
+.no-scroll {
+  overflow: hidden !important;
 }

@@ -1,97 +1,36 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { Cog, Maximize2, ChevronDown } from "lucide-react";
-import { useLanguage } from "../context/LanguageContext";
-import { dict } from "../utils/dict";
+import React from "react";
+import { User, Cog, Bell } from "lucide-react";
+import logo from "/images/logo.svg";
+import { settingsActions } from "../store";
 
-const Navbar: React.FC<{}> = ({}) => {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const language = useLanguage();
-  const text = dict[language];
-
-  // Check if the document is in fullscreen mode
-  const checkFullscreen = () => {
-    if (document.fullscreenElement) {
-      setIsFullscreen(true);
-    } else {
-      setIsFullscreen(false);
-    }
-  };
-
-  // Fullscreen Toggle Function
-  const handleFullscreen = () => {
-    if (!isFullscreen) {
-      // Enter fullscreen mode
-      document.documentElement.requestFullscreen();
-    } else {
-      // Exit fullscreen mode
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
-
-  // Set up a listener to check fullscreen status
-  useEffect(() => {
-    document.addEventListener("fullscreenchange", checkFullscreen);
-    document.addEventListener("webkitfullscreenchange", checkFullscreen);
-    document.addEventListener("mozfullscreenchange", checkFullscreen);
-    document.addEventListener("MSFullscreenChange", checkFullscreen);
-
-    // Clean up the event listeners on unmount
-    return () => {
-      document.removeEventListener("fullscreenchange", checkFullscreen);
-      document.removeEventListener("webkitfullscreenchange", checkFullscreen);
-      document.removeEventListener("mozfullscreenchange", checkFullscreen);
-      document.removeEventListener("MSFullscreenChange", checkFullscreen);
-    };
-  }, []);
+const Navbar = () => {
+  settingsActions.setTheme("dark");
 
   return (
-    <>
-      <nav
-        className={`${
-          isFullscreen ? "hidden" : "flex"
-        } items-center justify-between px-6 py-4 z-50 bg-dark-background text-dark-foreground shadow-md`}
-      >
-        {/* Logo */}
-        <div className="flex flex-row items-center space-x-2">
-          <img src="/images/Fireball.svg" alt="Logo" className="h-7 w-7" />
-          <div className="text-xl font-bold font-dancing">{text.app.name}</div>
+    <nav className="fixed p-0 top-0 left-0 w-full bg-light-background dark:bg-dark-background border-b border-white/10 shadow-lg z-50">
+      <div className="w-full px-6 py-4 flex items-center justify-between">
+        {/* Logo on the left */}
+        <div className="flex flex-row space-x-2 items-center">
+          <img src={logo} alt="CodeArena" className="h-9 w-9" />
+          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-dancing ">
+            CodeArena
+          </h1>
         </div>
 
-        {/* Icons */}
+        {/* Icons on the right */}
         <div className="flex items-center space-x-6">
-          {/* Settings Icon */}
-          <button
-            aria-label="Settings"
-            className="hover:text-dark-secondary transition duration-300"
-          >
-            <Cog size={24} />
+          <button className="text-light-primary dark:text-dark-primary hover:scale-105 hover:text-light-secondary dark:hover:text-dark-secondary transition-colors">
+            <Bell className="w-6 h-6" />
           </button>
-
-          {/* Fullscreen Icon */}
-          <button
-            onClick={handleFullscreen}
-            aria-label="Fullscreen"
-            className="hover:text-dark-secondary transition duration-300"
-          >
-            <Maximize2 size={24} />
+          <button className="text-light-primary dark:text-dark-primary hover:text-light-secondary dark:hover:text-dark-secondary transition-colors">
+            <Cog className="w-6 h-6" />
+          </button>
+          <button className="text-light-primary dark:text-dark-primary hover:text-light-secondary dark:hover:text-dark-secondary transition-colors">
+            <User className="w-6 h-6" />
           </button>
         </div>
-      </nav>
-
-      {/* Floating button to bring navbar back */}
-      {isFullscreen && (
-        <button
-          onClick={handleFullscreen}
-          className="fixed bottom-4 right-4 bg-dark-background text-dark-foreground p-2 rounded-full shadow-md hover:text-dark-secondary transition duration-300"
-          aria-label="Exit Fullscreen"
-        >
-          <ChevronDown size={24} />
-        </button>
-      )}
-    </>
+      </div>
+    </nav>
   );
 };
 

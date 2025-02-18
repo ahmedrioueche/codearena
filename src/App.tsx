@@ -1,12 +1,12 @@
-import "./App.css";
-import RoutesConfig from "./routes";
+import { Outlet } from "@tanstack/react-router";
+import { FC } from "react";
 
-function App() {
+const App: FC = () => {
   return (
-    <div>
-      <RoutesConfig />
-    </div>
+    <>
+      <Outlet />
+    </>
   );
-}
+};
 
 export default App;
