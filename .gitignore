@@ -12,11 +12,3 @@
 **/yarn-debug.log*
 **/yarn-error.log*
 **/coverage/
-
-/app/frontend/.env
-/app/frontend/.eslintcache
-
-/app/backend/.env
-/app/backend/.nyc_output/
-/app/backend/logs/
-/app/backend/*.pid
