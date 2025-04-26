@@ -1,6 +1,8 @@
 {
-  "build": {
-    "builder": "DOCKER",
-    "dockerfilePath": "docker-compose.yml"
-  }
+  "builds": [
+    {
+      "src": "docker-compose.yml",
+      "use": "docker-compose"
+    }
+  ]
 }
