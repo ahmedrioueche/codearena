@@ -1,15 +1,9 @@
 import ModesContainer from "../components/ModeContainer";
-import Profile from "../components/Profile";
 
 const Home = () => {
   return (
-    <div className="w-full space-y-8">
-      <div className="w-full">
-        <Profile />
-      </div>
-      <div className="w-full">
-        <ModesContainer />
-      </div>
+    <div className="container mx-auto p-4 max-w-10xl dark:bg-dark-background ">
+      <ModesContainer />
     </div>
   );
 };

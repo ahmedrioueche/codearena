@@ -1,15 +1,12 @@
-import { User, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import logo from "/images/logo.svg";
 import { settingsActions } from "../store";
 import { logout } from "../api/auth";
 import toast from "react-hot-toast";
 import { APP_PAGES } from "../constants/navigation";
-import { useState, useRef, useEffect } from "react";
 
 const Navbar = ({}: { onToggleSidebar: () => void }) => {
   settingsActions.setTheme("dark");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = async () => {
     try {
@@ -21,26 +18,9 @@ const Navbar = ({}: { onToggleSidebar: () => void }) => {
     }
   };
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <nav
-      className="fixed p-0 top-0 left-0 w-full border-b border-white/10 shadow-lg z-50"
+      className="fixed px-4 top-0 left-0 w-full border-b border-white/10 shadow-lg z-50"
       style={{
         background: `
           linear-gradient(135deg, 
@@ -74,27 +54,15 @@ const Navbar = ({}: { onToggleSidebar: () => void }) => {
           </h1>
         </div>
 
-        {/* Icons on the right */}
-        <div className="flex items-center space-x-6 relative" ref={dropdownRef}>
+        {/* Logout button on the right */}
+        <div className="flex items-center">
           <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="text-light-primary dark:text-dark-primary hover:scale-110 transition-colors relative"
+            onClick={handleLogout}
+            className="text-light-primary dark:text-dark-primary hover:scale-110 transition-transform"
+            title="Logout"
           >
-            <User className="w-6 h-6" />
+            <LogOut className="w-6 h-6" />
           </button>
-
-          {/* Dropdown menu */}
-          {isDropdownOpen && (
-            <div className="absolute bg-dark-secondary right-0 top-full mt-2 w-48  rounded-md shadow-lg py-1 z-50">
-              <button
-                onClick={handleLogout}
-                className="flex items-center px-4 py-2 text-sm text-gray-200 w-full text-left transition-colors"
-              >
-                <LogOut className="w-4 h-4 mr-3" />
-                Logout
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </nav>

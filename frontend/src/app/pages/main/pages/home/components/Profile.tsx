@@ -42,7 +42,7 @@ const Profile = () => {
         >
           <div className="flex flex-col md:flex-row justify-between items-center">
             {/* Left Section - Avatar and Info */}
-            <div className="flex flex-row items-center space-x-6 mb-4 md:mb-0">
+            <div className="flex flex-row md:items-center items-start space-x-6 mb-4 md:mb-0">
               {/* Developer Avatar with Rank Border */}
               <div className={`transform transition-all duration-500`}>
                 <img
