@@ -13,6 +13,9 @@ import { useState, useEffect } from "react";
 import useScreen from "../../../../hooks/useScreen";
 import { controlActions } from "../../../../store";
 import { useSelector } from "react-redux";
+import { logout } from "../../../../api/auth";
+import { APP_PAGES } from "../../../../constants/navigation";
+import toast from "react-hot-toast";
 
 interface GameNavbarProps {
   gameMode: GameMode;
@@ -53,9 +56,14 @@ const GameNavbar = ({}: GameNavbarProps) => {
     }
   };
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    console.log("Logging out...");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      location.href = APP_PAGES.login.route;
+    } catch (e) {
+      console.log(e);
+      toast.error(`Logout failed, please try again`);
+    }
   };
 
   useEffect(() => {
