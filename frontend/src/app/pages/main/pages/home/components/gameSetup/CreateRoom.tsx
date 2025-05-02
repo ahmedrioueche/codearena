@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { GameMode } from "../../../../../../../types/general";
 import Input from "../../../../../../../components/ui/Input";
-import PlayersConfig from "./PlayersConfig";
-import MatchConfigInterface from "./MatchConfig";
+import { GameMode } from "../../../../../../../types/game/game";
 
 export interface RoomSettings {
   roomName: string;
@@ -11,7 +9,7 @@ export interface RoomSettings {
   roomCode: string;
 }
 
-const CreateRoom = ({ gameMode }: { gameMode: GameMode }) => {
+const CreateRoom = ({}: { gameMode: GameMode }) => {
   const [roomSettings, setRoomSettings] = useState<RoomSettings>({
     roomName: "codeArena_33",
     maxPlayers: 2,
@@ -51,12 +49,6 @@ const CreateRoom = ({ gameMode }: { gameMode: GameMode }) => {
             className="w-full text-base"
           />
         </div>
-      </div>
-      <div className="mt-4">
-        <PlayersConfig configMode="create" />
-      </div>
-      <div className="mt-8">
-        <MatchConfig gameMode={gameMode} />
       </div>
     </div>
   );

@@ -1,10 +1,6 @@
-import React, { useState } from "react";
-import ProblemInterface from "../../../components/Problem";
-import CodeEditor from "../../../components/CodeEditor";
-import GameFooter from "../../../components/GameFooter";
+import { useState } from "react";
 import Board from "../../../components/Board";
 import Notepad from "../../../components/NotePad";
-import ControlsMenu from "../../../components/ControlsMenu";
 import PlayersContainer from "../components/PlayersContainer";
 import OpponentContainer from "../components/OpponentContainer";
 import { Player } from "../../../../../../types/game/game";

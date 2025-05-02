@@ -7,7 +7,6 @@ import {
 } from "../../../../../../../types/game/game";
 
 const ConfigModeSelector = ({
-  gameMode,
   onSelectConfigMode,
 }: {
   gameMode: GameMode;

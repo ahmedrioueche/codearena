@@ -16,10 +16,10 @@ const GameSearch: React.FC<{
   useEffect(() => {
     const timer = setTimeout(() => {
       setFoundPlayers([
-        { id: 1, name: "Player 1", rating: 1500 },
-        { id: 2, name: "Player 2", rating: 1550 },
-        { id: 3, name: "Player 3", rating: 1525 },
-        { id: 4, name: "Player 4", rating: 1575 },
+        { id: 1, name: "Player 1", rating: 1500, skillLevel: "beginner" },
+        { id: 2, name: "Player 2", rating: 1550, skillLevel: "beginner" },
+        { id: 3, name: "Player 3", rating: 1525, skillLevel: "beginner" },
+        { id: 4, name: "Player 4", rating: 1575, skillLevel: "beginner" },
       ]);
       setSearchState("found");
 
@@ -34,7 +34,7 @@ const GameSearch: React.FC<{
   const renderPlayerGrid = () => {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 w-full">
-        {foundPlayers.map((player, index) => (
+        {foundPlayers.map((player) => (
           <div
             key={player.id}
             className="flex flex-col items-center text-center"
@@ -132,7 +132,7 @@ const GameSearch: React.FC<{
               {[
                 { label: "Game Mode", value: gameMode },
                 { label: "Language", value: gameSettings.language },
-                { label: "Difficulty", value: gameSettings.skillLevel },
+                { label: "Difficulty", value: gameSettings.difficultyLevel },
                 {
                   label: "Time Limit",
                   value: `${gameSettings.timeLimit} minutes`,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Swords, Users } from "lucide-react";
+import { X, Users } from "lucide-react";
 import Button from "../../../../../../../components/ui/Button";
 import QuickMatch from "./QuickMatch";
 import JoinRoom from "./JoinRoom";

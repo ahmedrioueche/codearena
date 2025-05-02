@@ -1,7 +1,7 @@
 import PlayersConfig from "./PlayersConfig";
-import MatchConfigInterface from "./MatchConfig";
 import GameSearch from "./GameSearch";
 import { GameMode, GameSettings } from "../../../../../../../types/game/game";
+import MatchConfig from "./MatchConfig";
 
 function QuickMatch({
   gameMode,
@@ -12,9 +12,11 @@ function QuickMatch({
 }) {
   const gameSettings: GameSettings = {
     language: "javascript",
-    skillLevel: "intermediate",
+    difficultyLevel: "medium",
     timeLimit: "30",
     topics: ["data_structure", "algorithms"],
+    maxPlayers: "",
+    teamSize: "",
   };
 
   return (

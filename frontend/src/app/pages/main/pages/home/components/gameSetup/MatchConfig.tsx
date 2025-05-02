@@ -15,7 +15,6 @@ import {
 import { useMatchConfig } from "../../../../../../hooks/useMatchConfig";
 
 function MatchConfig({
-  gameMode,
   isGameStarted,
 }: {
   gameMode: GameMode;

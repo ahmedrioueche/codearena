@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Input from "../../../../../../../components/ui/Input";
-import { GameMode } from "../../../../../../../types/general";
 import { RoomSettings } from "./CreateRoom";
+import { GameMode } from "../../../../../../../types/game/game";
 
-function JoinRoom({ gameMode }: { gameMode: GameMode }) {
+function JoinRoom({}: { gameMode: GameMode }) {
   const [roomSettings, setRoomSettings] = useState<RoomSettings>({
     roomName: "",
     maxPlayers: 2,

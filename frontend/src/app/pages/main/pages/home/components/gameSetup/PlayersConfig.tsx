@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ConfigMode, GameMode } from "../../../../../../../types/game/game";
 
 interface TeamSettings {
@@ -8,7 +8,6 @@ interface TeamSettings {
 }
 function PlayersConfig({
   gameMode,
-  configMode,
 }: {
   gameMode: GameMode;
   configMode: ConfigMode;
