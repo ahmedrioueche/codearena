@@ -7,9 +7,8 @@ import { UserModel } from '../models/user';
 export class AuthController {
   private static readonly cookieOptions: CookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    domain: process.env.NODE_ENV === 'production' ? '.up.railway.app' : undefined,
+    secure: true,
+    sameSite: 'none',
     path: '/',
   };
 
