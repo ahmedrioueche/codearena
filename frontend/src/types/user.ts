@@ -10,6 +10,8 @@ export interface User {
   createdAt: string;
   score: number;
   rank: Rank;
+  accuracy: number;
+  wins: number;
 }
 
 export interface UserCreate {

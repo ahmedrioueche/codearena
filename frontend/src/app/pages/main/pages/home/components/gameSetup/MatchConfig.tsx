@@ -140,11 +140,8 @@ function MatchConfig({
             >
               <div className="flex flex-col items-center">
                 <Clock
-                  className={`w-6 h-6 mb-3 ${
-                    selectedTime === time.id
-                      ? "text-light-primary dark:text-dark-primary"
-                      : "text-light-secondary dark:text-dark-secondary group-hover:text-light-primary dark:group-hover:text-dark-primary"
-                  }`}
+                  className={`w-6 h-6 mb-3 
+                      text-light-primary dark:text-dark-primary                  `}
                 />
                 <div className="text-xl font-bold text-light-foreground dark:text-dark-foreground mb-1">
                   {time.duration}
