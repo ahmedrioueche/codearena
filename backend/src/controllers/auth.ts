@@ -11,23 +11,26 @@ export class AuthController {
       const userData: ISignUpRequest = req.body;
       const { user, tokens } = await AuthService.signUp(userData);
 
+      // Set Access-Control-Allow-Credentials header
+      res.header('Access-Control-Allow-Credentials', 'true');
+
       // Set secure HTTP-only cookies
       res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
-        secure: true, // Always true in production, consider forcing it
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        domain: process.env.NODE_ENV === 'production' ? 'up.railway.app' : undefined,
+        secure: true,
+        sameSite: 'none',
         maxAge: 15 * 60 * 1000,
         path: '/',
       });
 
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        domain: process.env.NODE_ENV === 'production' ? 'up.railway.app' : undefined,
+        secure: true,
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
       });
+
       res.status(201).json({
         user: { email: user.email, id: user._id },
         accessToken: tokens.accessToken,
@@ -41,24 +44,25 @@ export class AuthController {
     try {
       const credentials: ISignInRequest = req.body;
       const { user, tokens } = await AuthService.signIn(credentials);
-      const env = process.env.NODE_ENV;
-      console.log({ env });
+
+      // Set Access-Control-Allow-Credentials header
+      res.header('Access-Control-Allow-Credentials', 'true');
+
       // Set secure HTTP-only cookies
       res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
-        secure: true, // Always true in production, consider forcing it
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        domain: process.env.NODE_ENV === 'production' ? 'up.railway.app' : undefined,
+        secure: true,
+        sameSite: 'none',
         maxAge: 15 * 60 * 1000,
         path: '/',
       });
 
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        domain: process.env.NODE_ENV === 'production' ? 'up.railway.app' : undefined,
+        secure: true,
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
       });
 
       res.status(200).json({
@@ -72,16 +76,21 @@ export class AuthController {
 
   static async logout(req: Request, res: Response) {
     try {
+      // Set Access-Control-Allow-Credentials header
+      res.header('Access-Control-Allow-Credentials', 'true');
+
       res.clearCookie('accessToken', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
+        path: '/',
       });
 
       res.clearCookie('refreshToken', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
+        path: '/',
       });
 
       res.status(200).json({ message: 'Logged out successfully' });
@@ -89,6 +98,65 @@ export class AuthController {
       res.status(500).json({ message: 'Logout failed', error: error.message });
     }
   }
+
+  static async refreshToken(req: Request, res: Response) {
+    try {
+      const refreshToken = req.cookies?.refreshToken || req.headers?.authorization?.split(' ')[1];
+
+      if (!refreshToken) {
+        return res.status(401).json({ message: 'No refresh token provided' });
+      }
+      // Verify and get new tokens
+      const tokens = await AuthService.refreshTokens(refreshToken);
+
+      // Set Access-Control-Allow-Credentials header
+      res.header('Access-Control-Allow-Credentials', 'true');
+
+      // Set new secure HTTP-only cookies
+      res.cookie('accessToken', tokens.accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 15 * 60 * 1000,
+        path: '/',
+      });
+
+      res.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
+      });
+
+      res.status(200).json({
+        message: 'Tokens refreshed successfully',
+        accessToken: tokens.accessToken,
+      });
+    } catch (error: any) {
+      // Clear invalid tokens
+      res.clearCookie('accessToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+      });
+
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+      });
+
+      res.status(401).json({
+        message: 'Invalid refresh token',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      });
+    }
+  }
+
+  // Rest of your methods remain unchanged
   static sendOtp = async (req: Request<{}, {}, ISendOtpRequest>, res: Response) => {
     try {
       const { email } = req.body;
@@ -127,47 +195,6 @@ export class AuthController {
     }
   };
 
-  static async refreshToken(req: Request, res: Response) {
-    try {
-      const refreshToken = req.cookies?.refreshToken || req.headers?.authorization?.split(' ')[1];
-
-      if (!refreshToken) {
-        return res.status(401).json({ message: 'No refresh token provided' });
-      }
-      // Verify and get new tokens
-      const tokens = await AuthService.refreshTokens(refreshToken);
-
-      // Set new secure HTTP-only cookies
-      res.cookie('accessToken', tokens.accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 15 * 60 * 1000, // 15 minutes
-      });
-
-      res.cookie('refreshToken', tokens.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
-
-      res.status(200).json({
-        message: 'Tokens refreshed successfully',
-        accessToken: tokens.accessToken,
-      });
-    } catch (error: any) {
-      // Clear invalid tokens
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
-
-      res.status(401).json({
-        message: 'Invalid refresh token',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
-      });
-    }
-  }
-
   static resetPassword = async (
     req: Request<{}, {}, { email: string; newPassword: string }>,
     res: Response,
@@ -187,13 +214,16 @@ export class AuthController {
       // 3. Clear any existing tokens (optional security measure)
       res.clearCookie('accessToken', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
+        path: '/',
       });
+
       res.clearCookie('refreshToken', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
+        path: '/',
       });
 
       // 4. Return success response
