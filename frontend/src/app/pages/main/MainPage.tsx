@@ -9,7 +9,6 @@ const MainPage = () => {
   const isRoot = matchRoute({ to: "/" });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
-  const toggleSidebar = () => setIsSidebarCollapsed((prev) => !prev);
   const closeSidebar = () => setIsSidebarCollapsed(true);
 
   return (
@@ -44,7 +43,7 @@ const MainPage = () => {
 
       {/* Content */}
       <div className="relative z-10">
-        <Navbar onToggleSidebar={toggleSidebar} />
+        <Navbar />
 
         {/* Main Layout */}
         <div className="mt-24 flex flex-1 w-full gap-4 p-1 md:px-4 px-2">
