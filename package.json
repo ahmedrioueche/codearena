@@ -1,0 +1,16 @@
+{
+  "name": "codearena-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd frontend && npm run build && cd ../backend && npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

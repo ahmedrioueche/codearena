@@ -1,8 +1,0 @@
-{
-  "builds": [
-    {
-      "src": "docker-compose.yml",
-      "use": "docker-compose"
-    }
-  ]
-}

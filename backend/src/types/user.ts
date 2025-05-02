@@ -8,6 +8,7 @@ export interface IUser {
   fullName: string;
   age: number;
   experienceLevel: ExperienceLevel;
+
   createdAt?: Date;
   updatedAt?: Date;
 }
