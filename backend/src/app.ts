@@ -41,6 +41,9 @@ class App {
   }
 
   private getCorsOrigins(): string[] {
+    const ORIGIN = process.env.ORIGIN;
+    console.log({ ORIGIN });
+
     const origins = process.env.ORIGIN ? process.env.ORIGIN.split(',') : ['http://localhost:5173'];
 
     if (process.env.NODE_ENV !== 'production') {
