@@ -1,7 +1,5 @@
 import {
-  User,
-  Cog,
-  Bell,
+  LogOut,
   Fullscreen,
   Minimize,
   MoreVertical,
@@ -55,6 +53,11 @@ const GameNavbar = ({}: GameNavbarProps) => {
     }
   };
 
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("Logging out...");
+  };
+
   useEffect(() => {
     const handleFullScreenChange = () => {
       setIsFullScreen(document.fullscreenElement !== null);
@@ -85,11 +88,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const menuItems = [
-    { icon: Bell, label: "Notifications" },
-    { icon: Cog, label: "Settings" },
-    { icon: User, label: "Profile" },
-  ];
+  const menuItems = [{ icon: LogOut, label: "Logout", action: handleLogout }];
 
   return (
     <nav className="fixed p-0 top-0 left-0 w-full bg-light-background dark:bg-dark-background border-b border-white/10 shadow-lg z-50">
@@ -105,7 +104,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
           {!isMobile && (
             <button
               onClick={handleFullScreen}
-              className="text-light-primary dark:text-dark-primary hover:scale-105 hover:text-light-secondary dark:hover:text-dark-secondary transition-colors"
+              className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
             >
               {isFullScreen ? (
                 <Minimize className="w-6 h-6" />
@@ -122,7 +121,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                 onClick={() => {
                   handleToggleProblem();
                 }}
-                className="text-light-primary dark:text-dark-text-primary hover:scale-105 hover:text-light-secondary dark:hover:text-dark-secondary transition-colors"
+                className="text-light-primary dark:text-dark-text-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
               >
                 <BookOpen className="w-6 h-6" />
               </button>
@@ -132,7 +131,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                 onClick={() => {
                   handleToggleControlsMenu();
                 }}
-                className="text-light-primary dark:text-dark-primary hover:scale-105 hover:text-light-secondary dark:hover:text-dark-secondary transition-colors"
+                className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
               >
                 <Sliders className="w-6 h-6" />
               </button>
@@ -142,7 +141,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                 <button
                   id="mobile-menu-button"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="mt-1 text-light-primary dark:text-dark-primary hover:scale-105 hover:text-light-secondary dark:hover:text-dark-secondary transition-colors"
+                  className="mt-1 text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
                 >
                   <MoreVertical className="w-6 h-6" />
                 </button>
@@ -153,11 +152,14 @@ const GameNavbar = ({}: GameNavbarProps) => {
                     className="absolute right-0 mt-2 w-48 bg-white dark:bg-black border border-light-border dark:border-dark-border rounded-lg shadow-lg z-50"
                   >
                     <div className="py-2">
-                      {menuItems.map(({ icon: Icon, label }) => (
+                      {menuItems.map(({ icon: Icon, label, action }) => (
                         <button
                           key={label}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-light-accent dark:hover:bg-dark-accent transition-colors"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            action();
+                          }}
+                          className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
                         >
                           <Icon className="w-5 h-5" />
                           <span>{label}</span>
@@ -168,7 +170,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                           setIsMobileMenuOpen(false);
                           handleFullScreen();
                         }}
-                        className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-light-accent dark:hover:bg-dark-accent transition-colors"
+                        className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
                       >
                         {isFullScreen ? (
                           <Minimize className="w-5 h-5" />
@@ -185,10 +187,11 @@ const GameNavbar = ({}: GameNavbarProps) => {
           )}
 
           {!isMobile &&
-            menuItems.map(({ icon: Icon, label }) => (
+            menuItems.map(({ icon: Icon, label, action }) => (
               <button
                 key={label}
-                className="text-light-primary dark:text-dark-primary hover:text-light-secondary dark:hover:text-dark-secondary transition-colors"
+                onClick={action}
+                className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
               >
                 <Icon className="w-6 h-6" />
               </button>
