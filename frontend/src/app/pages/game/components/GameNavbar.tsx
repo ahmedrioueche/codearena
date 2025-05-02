@@ -129,7 +129,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                 onClick={() => {
                   handleToggleProblem();
                 }}
-                className="text-light-primary dark:text-dark-text-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
               >
                 <BookOpen className="w-6 h-6" />
               </button>
