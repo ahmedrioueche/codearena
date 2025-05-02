@@ -2,6 +2,7 @@ import axios from "axios";
 import { UserCreate } from "../types/user";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 // Create an axios instance with default credentials
 const authAxios = axios.create({
   withCredentials: true,
