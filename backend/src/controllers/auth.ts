@@ -15,16 +15,20 @@ export class AuthController {
       res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.railway.app' : undefined,
         maxAge: 15 * 60 * 1000,
+        path: '/',
       });
 
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.railway.app' : undefined,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+
       res.status(201).json({
         user: { email: user.email, id: user._id },
         accessToken: tokens.accessToken,
@@ -43,14 +47,17 @@ export class AuthController {
       res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.railway.app' : undefined,
         maxAge: 15 * 60 * 1000,
+        path: '/',
       });
 
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.railway.app' : undefined,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 

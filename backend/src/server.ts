@@ -10,6 +10,5 @@ const ORIGIN = process.env.ORIGIN || '0.0.0.0';
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://${ORIGIN}:${PORT}`);
-    console.log(`API Base URL: ${process.env.API_BASE_URL}`);
   });
 });
