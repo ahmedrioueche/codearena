@@ -42,7 +42,8 @@ export class AuthController {
     try {
       const credentials: ISignInRequest = req.body;
       const { user, tokens } = await AuthService.signIn(credentials);
-
+      const env = process.env.NODE_ENV;
+      console.log({ env });
       // Set secure HTTP-only cookies
       res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
