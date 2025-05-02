@@ -5,7 +5,7 @@ import { logout } from "../api/auth";
 import toast from "react-hot-toast";
 import { APP_PAGES } from "../constants/navigation";
 
-const Navbar = ({}: { onToggleSidebar: () => void }) => {
+const Navbar = ({}: {}) => {
   settingsActions.setTheme("dark");
 
   const handleLogout = async () => {

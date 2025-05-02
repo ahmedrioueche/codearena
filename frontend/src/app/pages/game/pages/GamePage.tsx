@@ -1,21 +1,10 @@
-import { Outlet, useParams } from "@tanstack/react-router";
-import GameNavbar from "../components/GameNavbar";
-import { GameMode } from "../../../../types/game/game";
+import { Outlet } from "@tanstack/react-router";
+import Navbar from "../../../../components/Navbar";
 
 function GamePage() {
-  const params = useParams({ strict: false });
-
-  const gameModeFromUrl = params["*"];
-
-  const validatedGameMode: GameMode = (
-    ["solo", "battle", "collab"].includes(gameModeFromUrl)
-      ? gameModeFromUrl
-      : "solo"
-  ) as GameMode;
-
   return (
     <div>
-      <GameNavbar gameMode={validatedGameMode} />
+      <Navbar />
       <Outlet />
     </div>
   );
