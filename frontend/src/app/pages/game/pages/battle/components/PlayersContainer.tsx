@@ -1,5 +1,4 @@
 import React from "react";
-import { ChevronRight } from "lucide-react";
 import PlayerCard from "../../../components/ui/PlayerCard";
 import { Player } from "../../../../../../types/game/game";
 

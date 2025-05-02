@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Clock, X, Settings } from "lucide-react";
+import { BookOpen, Clock, X } from "lucide-react";
 import {
   languages,
   timeLimits,

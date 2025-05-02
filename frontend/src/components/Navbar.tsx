@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { APP_PAGES } from "../constants/navigation";
 import { useState, useRef, useEffect } from "react";
 
-const Navbar = ({ onToggleSidebar }: { onToggleSidebar: () => void }) => {
+const Navbar = ({}: { onToggleSidebar: () => void }) => {
   settingsActions.setTheme("dark");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

@@ -14,10 +14,10 @@ const BattlePage = () => {
     isOpponentCollapsed: true,
   });
 
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [codeEditorWidth, setCodeEditorWidth] = useState(
     window.innerWidth * 0.6
   );
+  console.log({ codeEditorWidth });
   const [selectedOpponent, setSelectedOpponent] = useState<Player>();
 
   // Helper function to update collapsed state
@@ -114,10 +114,6 @@ const BattlePage = () => {
 
     // Update Opponent collapsed state
     updateCollapsedState("isOpponentCollapsed", willOpponentBeCollapsed);
-  };
-
-  const handleToggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
   const handleCodeEditorResize = (newWidth: number) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Share2, Copy, Check } from "lucide-react";
 
 const RoomOptions = ({ roomId = "123-456-789" }) => {

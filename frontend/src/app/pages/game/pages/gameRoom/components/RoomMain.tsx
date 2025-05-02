@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Users, Search, Play } from "lucide-react";
+import { useState } from "react";
+import { Search, Play } from "lucide-react";
 
 interface Player {
   id: string;
@@ -57,7 +57,7 @@ const TeamContainer = ({ team }: { team: Team }) => (
 
 const RoomMain = () => {
   const [isSearching, setIsSearching] = useState(false);
-  const [teams, setTeams] = useState<Team[]>([
+  const [teams] = useState<Team[]>([
     {
       id: "1",
       name: "Team Alpha",

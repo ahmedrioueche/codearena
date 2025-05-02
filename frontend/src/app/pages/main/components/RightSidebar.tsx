@@ -1,7 +1,5 @@
-import React from "react";
 import {
   GitMerge,
-  Rocket,
   Terminal,
   Shield,
   TrendingUp,
