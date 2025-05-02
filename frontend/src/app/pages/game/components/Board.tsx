@@ -23,11 +23,7 @@ type Coordinates = {
   offsetY: number;
 };
 
-const Board: React.FC<BoardProps> = ({
-  gameMode,
-  isCollapsed,
-  onToggleCollapse,
-}) => {
+const Board: React.FC<BoardProps> = ({ isCollapsed, onToggleCollapse }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);

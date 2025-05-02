@@ -29,7 +29,6 @@ interface ProblemProps {
 }
 
 const Problem: React.FC<ProblemProps> = ({
-  gameMode,
   problem,
   onGetNewProblem,
   hints,

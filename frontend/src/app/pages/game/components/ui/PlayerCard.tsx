@@ -1,5 +1,4 @@
 import React from "react";
-import { Trophy } from "lucide-react";
 
 interface PlayerCardProps {
   name: string;
@@ -12,7 +11,6 @@ interface PlayerCardProps {
 const PlayerCard: React.FC<PlayerCardProps> = ({
   name,
   avatar,
-  rating,
   skillLevel,
   onClick,
 }) => {

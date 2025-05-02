@@ -6,7 +6,7 @@ interface EditorSectionProps {
   onChange: (value: string) => void;
 }
 
-const EditorSection = ({ label, value, onChange }: EditorSectionProps) => (
+const EditorSection = ({ value, onChange }: EditorSectionProps) => (
   <div className="h-[300px]">
     <CodeEditor
       starterCode={value}

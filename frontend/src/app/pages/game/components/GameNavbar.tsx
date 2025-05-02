@@ -11,19 +11,16 @@ import {
 import logo from "/images/logo.svg";
 import { RootState, settingsActions } from "../../../../store";
 import { GameMode } from "../../../../types/game/game";
-import { useRouter } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import useScreen from "../../../../hooks/useScreen";
 import { controlActions } from "../../../../store";
-import { controlSlice } from "../../../../store/slices/control";
 import { useSelector } from "react-redux";
 
 interface GameNavbarProps {
   gameMode: GameMode;
 }
 
-const GameNavbar = ({ gameMode }: GameNavbarProps) => {
-  const router = useRouter();
+const GameNavbar = ({}: GameNavbarProps) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isMobile } = useScreen();

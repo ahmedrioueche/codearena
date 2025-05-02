@@ -16,7 +16,6 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
-  gameMode,
   width,
   onResize,
   starterCode,

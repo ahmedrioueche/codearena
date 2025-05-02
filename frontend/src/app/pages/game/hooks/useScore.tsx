@@ -5,6 +5,7 @@ import {
 } from "../../../../types/game/game";
 
 export const useScore = (gameMode: GameMode) => {
+  console.log({ gameMode });
   const calculateScore = (
     problemPoints: number | undefined,
     result: SolutionValidationResult,

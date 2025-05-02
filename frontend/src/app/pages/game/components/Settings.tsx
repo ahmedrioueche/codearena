@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, ChevronRight, Clock, X } from "lucide-react";
+import { BookOpen, ChevronRight, Clock } from "lucide-react";
 import { DifficultyLevel, GameSettings } from "../../../../types/game/game";
 import useScreen from "../../../../hooks/useScreen";
 import {

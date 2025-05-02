@@ -11,7 +11,6 @@ interface OpponentContainerProps {
 const OpponentContainer: React.FC<OpponentContainerProps> = ({
   opponent,
   isCollapsed,
-  onToggleCollapse,
 }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [revealTimeLeft, setRevealTimeLeft] = useState(0);
@@ -60,6 +59,7 @@ const OpponentContainer: React.FC<OpponentContainerProps> = ({
           gameMode="battle"
           width={window.innerWidth}
           onResize={() => {}}
+          starterCode={undefined}
         />
       </div>
       {/* Overlay Content */}

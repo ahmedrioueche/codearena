@@ -39,7 +39,6 @@ import TimeProgressBar from "./ui/TimeProgressBar";
 const ScoreDetails = lazy(() => import("../components/ScoreDetails"));
 
 const GameFooter = ({
-  gameMode,
   problem,
   userSolution,
   validationResult,
