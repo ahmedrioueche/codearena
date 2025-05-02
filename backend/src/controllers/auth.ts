@@ -1,15 +1,17 @@
 import { CookieOptions, Request, Response } from 'express';
 import { AuthService } from '../services/auth';
-import { ISignUpRequest, ISignInRequest, ISendOtpRequest, IVerifyOtpRequest } from '../types/auth';
 import { OtpService } from '../services/otp';
 import { UserModel } from '../models/user';
 
 export class AuthController {
   private static readonly cookieOptions: CookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    secure: true, // MUST be true in production
+    sameSite: 'none', // Required for cross-origin
     path: '/',
+    // Explicitly OMIT domain property
+    // Add partition key for Chrome's new storage partitioning
+    partitioned: true, // New in Chrome 114+ for cross-site cookies
   };
 
   private static setAuthCookies(

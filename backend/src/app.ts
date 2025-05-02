@@ -26,12 +26,14 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
 
     // Enhanced CORS configuration
+    // In your App.ts middleware setup
     this.app.use(
       cors({
-        origin: this.getCorsOrigins(),
+        origin: process.env.ORIGIN || 'https://codearena-delta.vercel.app',
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        exposedHeaders: ['set-cookie'], // Add this line
       }),
     );
 
