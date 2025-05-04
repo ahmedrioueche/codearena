@@ -45,13 +45,13 @@ const ProblemModal: React.FC<ProblemModalProps> = ({
           <>
             <div className="flex gap-4 mb-4 ">
               <span
-                className={`flex items-center gap-1 text-light-accent dark:text-dark-accent ${getDifficultyColor(
+                className={`flex items-center gap-1 text-light-primary dark:text-dark-primary ${getDifficultyColor(
                   problem.difficulty
                 )}`}
               >
                 <Star
                   size={18}
-                  className="text-light-accent dark:text-dark-accent mb-0.5"
+                  className="text-light-primary dark:text-dark-primary mb-0.5"
                 />
                 {problem.difficulty?.charAt(0).toUpperCase() +
                   problem.difficulty?.slice(1)}

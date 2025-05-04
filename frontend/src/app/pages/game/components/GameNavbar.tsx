@@ -9,7 +9,7 @@ import {
 import logo from "/images/logo.svg";
 import { RootState, settingsActions } from "../../../../store";
 import { GameMode } from "../../../../types/game/game";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useScreen from "../../../../hooks/useScreen";
 import { controlActions } from "../../../../store";
 import { useSelector } from "react-redux";
@@ -31,6 +31,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
   const isControlsOpenOnMobile = useSelector(
     (state: RootState) => state.problemControl.isControlsToggled
   );
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   settingsActions.setTheme("dark");
 
@@ -78,22 +79,22 @@ const GameNavbar = ({}: GameNavbarProps) => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const mobileMenu = document.getElementById("mobile-menu");
-      const mobileMenuButton = document.getElementById("mobile-menu-button");
-
+    const handleClickOutside = (event: MouseEvent) => {
       if (
-        mobileMenu &&
-        !mobileMenu.contains(e.target as Node) &&
-        mobileMenuButton &&
-        !mobileMenuButton.contains(e.target as Node)
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        !document
+          .getElementById("mobile-menu-button")
+          ?.contains(event.target as Node)
       ) {
         setIsMobileMenuOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const menuItems = [
@@ -166,6 +167,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
 
                 {isMobileMenuOpen && (
                   <div
+                    ref={mobileMenuRef}
                     id="mobile-menu"
                     className="absolute right-0 mt-2 w-48 bg-light-background dark:bg-dark-background border border-light-border dark:border-dark-border rounded-lg shadow-lg z-50"
                   >

@@ -162,7 +162,7 @@ const Problem: React.FC<ProblemProps> = ({
 
               <div className="flex gap-4 mb-6">
                 <span
-                  className={`flex items-center gap-1 text-light-accent dark:text-dark-accent ${getDifficultyColor(
+                  className={`flex items-center gap-1 text-light-primary dark:text-dark-primary ${getDifficultyColor(
                     currentProblem.difficulty
                   )}`}
                 >

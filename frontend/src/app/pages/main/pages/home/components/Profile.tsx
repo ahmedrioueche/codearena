@@ -92,7 +92,7 @@ const Profile = () => {
                 <div className="flex flex-col items-center px-3 py-2 rounded-lg group transition-colors">
                   <Target
                     size={24}
-                    className="text-light-accent dark:text-dark-accent mb-1 group-hover:scale-110 transition-transform"
+                    className="text-light-primary dark:text-dark-primary mb-1 group-hover:scale-110 transition-transform"
                   />
                   <span className="text-xl font-bold text-light-foreground dark:text-dark-foreground">
                     {currentUser.accuracy ? `${currentUser.accuracy}%` : "0%"}

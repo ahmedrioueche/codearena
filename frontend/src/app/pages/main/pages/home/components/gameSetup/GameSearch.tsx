@@ -119,7 +119,7 @@ const GameSearch: React.FC<{
                     <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 text-light-primary dark:text-dark-primary animate-spin" />
                   )}
                   {searchState === "ready" && (
-                    <Users className="w-6 h-6 sm:w-8 sm:h-8 text-light-accent dark:text-dark-accent" />
+                    <Users className="w-6 h-6 sm:w-8 sm:h-8 text-light-primary dark:text-dark-primary" />
                   )}
                 </div>
               </div>
