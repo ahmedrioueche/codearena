@@ -120,7 +120,11 @@ const SoloPage = () => {
       setProblem(problem!);
       setIsGameStarted(true);
       setIsisNewProblem(true);
-      excludeProblem(problem?.title, problem?.language, problem?.difficulty);
+      excludeProblem(
+        problem?.title,
+        problem?.language || matchConfig?.language,
+        problem?.difficulty
+      );
 
       setTimeout(() => {
         setIsisNewProblem(false);

@@ -18,7 +18,6 @@ export const handleFetch = async (
     headers = {},
     multiForm = false,
     responseType,
-    redirectOnUnAuthorized = true,
     withCredentials = true,
   }: FetchParams = {}
 ) => {
@@ -41,18 +40,7 @@ export const handleFetch = async (
     return responseData;
   } catch (error) {
     console.error(error);
-    //if (
-    //  (error as any)?.response?.status === 401 &&
-    //  withCredentials &&
-    //  redirectOnUnAuthorized
-    //) {
-    //  if (location.pathname.startsWith("/auth")) return;
-    //  const goto = location.pathname.startsWith("/auth")
-    //    ? ""
-    //    : `?goto=${location.pathname}`;
-    //
-    //  location.href = `/auth/login${goto}`;
-    //}
+
     throw new Error(String(error));
   }
 };
