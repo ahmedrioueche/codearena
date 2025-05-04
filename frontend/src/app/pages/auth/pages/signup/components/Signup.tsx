@@ -3,6 +3,7 @@ import { UserCreate } from "../../../../../../types/user";
 import { sendOtp, signup } from "../../../../../../api/auth";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
+import InputField from "../../../../../../components/ui/InputField";
 
 interface SignupProps {
   onSuccess: (data: UserCreate) => void;
@@ -64,12 +65,9 @@ const Signup = ({ onSuccess }: SignupProps) => {
         await sendOtp(data.email);
         onSuccess(data);
       } catch (err) {
-        console.log({ err });
         const axiosError = err as AxiosError<{ message?: string }>;
         const status = axiosError.response?.status;
         const responseMessage = axiosError.response?.data?.message;
-
-        console.log({ status, responseMessage });
 
         let errorMessage = "Error submitting form. Please try again.";
 
@@ -80,7 +78,6 @@ const Signup = ({ onSuccess }: SignupProps) => {
             responseMessage?.includes("E11000") ||
             responseMessage?.includes("duplicate key")
           ) {
-            // Handle MongoDB duplicate key errors
             if (responseMessage.includes("username")) {
               errorMessage =
                 "Username already in use. Please choose a different one.";
@@ -108,11 +105,6 @@ const Signup = ({ onSuccess }: SignupProps) => {
         }
 
         setError(errorMessage);
-        console.error("Signup error:", {
-          status,
-          message: responseMessage,
-          data: axiosError.response?.data,
-        });
       }
     }
 
@@ -122,7 +114,6 @@ const Signup = ({ onSuccess }: SignupProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Clear error when user starts typing
     if (error) {
       setError("");
     }
@@ -145,34 +136,32 @@ const Signup = ({ onSuccess }: SignupProps) => {
 
       {/* Signup Form */}
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <input
-          type="text"
+        <InputField
           name="username"
-          className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent focus:ring-blue-500 transition-all"
           placeholder="Choose a username"
           value={formData.username}
           onChange={handleInputChange}
         />
-        <input
-          type="email"
+
+        <InputField
           name="email"
-          className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent focus:ring-blue-500 transition-all"
+          type="email"
           placeholder="Enter your email"
           value={formData.email}
           onChange={handleInputChange}
         />
-        <input
-          type="password"
+
+        <InputField
           name="password"
-          className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent focus:ring-blue-500 transition-all"
+          type="password"
           placeholder="Create your password"
           value={formData.password}
           onChange={handleInputChange}
         />
-        <input
-          type="password"
+
+        <InputField
           name="confirmPassword"
-          className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent focus:ring-blue-500 transition-all"
+          type="password"
           placeholder="Confirm your password"
           value={formData.confirmPassword}
           onChange={handleInputChange}

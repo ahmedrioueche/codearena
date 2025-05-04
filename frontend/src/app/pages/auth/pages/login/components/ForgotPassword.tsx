@@ -4,6 +4,7 @@ import { resetPassword, sendOtp } from "../../../../../../api/auth";
 import Otp from "../../../components/Otp";
 import { Loader2 } from "lucide-react";
 import { AxiosError } from "axios";
+import InputField from "../../../../../../components/ui/InputField";
 
 type ForgotPasswordView = "email" | "otp" | "reset";
 
@@ -139,23 +140,26 @@ const ForgotPassword = ({
               </p>
             </div>
             <form onSubmit={handleResetPassword} className="space-y-4">
-              <input
+              <InputField
                 type="password"
-                className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="New Password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
                 minLength={8}
               />
-              <input
+              <InputField
                 type="password"
-                className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="Confirm New Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={8}
+                error={
+                  newPassword !== confirmPassword && confirmPassword !== ""
+                    ? "Passwords don't match"
+                    : ""
+                }
               />
               <button
                 type="submit"

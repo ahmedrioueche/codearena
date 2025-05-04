@@ -2,6 +2,7 @@ import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { login } from "../../../../../../api/auth";
 import { AxiosError } from "axios";
+import InputField from "../../../../../../components/ui/InputField";
 
 interface LoginProps {
   onForgotPassword: (email: string) => void;
@@ -70,6 +71,12 @@ const Login = ({ onForgotPassword, onSuccess }: LoginProps) => {
     onForgotPassword(formData.email);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (error) setError("");
+  };
+
   return (
     <div className="bg-black/40 backdrop-blur-xl p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl max-w-md w-full">
       {/* Logo */}
@@ -87,28 +94,21 @@ const Login = ({ onForgotPassword, onSuccess }: LoginProps) => {
 
       {/* Login Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <input
-            type="email"
-            className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-          />
-        </div>
-        <div className="space-y-2">
-          <input
-            type="password"
-            className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-          />
-        </div>
+        <InputField
+          name="email"
+          type="email"
+          placeholder="Enter your email"
+          value={formData.email}
+          onChange={handleInputChange}
+        />
+
+        <InputField
+          name="password"
+          type="password"
+          placeholder="Enter your password"
+          value={formData.password}
+          onChange={handleInputChange}
+        />
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
@@ -131,7 +131,7 @@ const Login = ({ onForgotPassword, onSuccess }: LoginProps) => {
       {/* Links */}
       <div className="mt-8 text-center text-sm">
         <button
-          onClick={() => handleForgotPassword()}
+          onClick={handleForgotPassword}
           className="text-blue-300 hover:text-blue-400 transition-colors"
         >
           Forgot Password?

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Input from "../../../../../../../components/ui/Input";
+import Input from "../../../../../../../components/ui/InputField";
 import { RoomSettings } from "./CreateRoom";
 import { GameMode } from "../../../../../../../types/game/game";
 

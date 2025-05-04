@@ -4,6 +4,7 @@ import { updateUser } from "../../../../../../api/user";
 import { ExperienceLevel, UserUpdate } from "../../../../../../types/user";
 import { Loader2 } from "lucide-react";
 import { capitalize } from "../../../../../../utils/helper";
+import InputField from "../../../../../../components/ui/InputField";
 
 interface UserDetailsProps {
   onSuccess: () => void;
@@ -31,16 +32,16 @@ const UserDetails = ({ onSuccess }: UserDetailsProps) => {
     }
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle experience level change
   const handleExperienceLevelChange = (value: string) => {
-    setFormData({ ...formData, experienceLevel: value as ExperienceLevel });
+    setFormData({
+      ...formData,
+      experienceLevel: value.toLowerCase() as ExperienceLevel,
+    });
   };
 
   return (
@@ -61,30 +62,23 @@ const UserDetails = ({ onSuccess }: UserDetailsProps) => {
       {/* User Details Form */}
       <form className="space-y-5" onSubmit={handleSubmit}>
         {/* Full Name */}
-        <div className="space-y-2">
-          <input
-            type="text"
-            name="fullName"
-            className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="Full Name"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        <InputField
+          name="fullName"
+          placeholder="Full Name"
+          value={formData.fullName}
+          onChange={handleInputChange}
+          required
+        />
 
         {/* Age */}
-        <div className="space-y-2">
-          <input
-            type="number"
-            name="age"
-            className="w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="How old are you?"
-            value={formData.age}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        <InputField
+          name="age"
+          type="number"
+          placeholder="How old are you?"
+          value={formData.age || ""}
+          onChange={handleInputChange}
+          required
+        />
 
         {/* Experience Level */}
         <div className="space-y-2">
@@ -104,7 +98,8 @@ const UserDetails = ({ onSuccess }: UserDetailsProps) => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:opacity-90 transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={isSubmitting}
+          className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:opacity-90 transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <span className="flex items-center justify-center">
