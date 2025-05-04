@@ -21,7 +21,7 @@ const userSchema = new Schema<IUserDocument>(
       type: String,
       required: true,
       minlength: 8,
-      select: false,
+      select: true,
     },
     fullName: {
       type: String,
