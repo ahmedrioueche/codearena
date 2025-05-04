@@ -354,7 +354,7 @@ const GameFooter = ({
             averageTime={problem?.averageTime!}
           />
 
-          <div className="flex flex-row space-x-2">
+          <div className="flex flex-row space-x-1">
             <Button
               onClick={() => setIsGetSolutionModalOpen(true)}
               variant="primary"

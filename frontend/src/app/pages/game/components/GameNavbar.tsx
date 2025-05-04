@@ -16,7 +16,6 @@ import { useSelector } from "react-redux";
 import { logout } from "../../../../api/auth";
 import { APP_PAGES } from "../../../../constants/navigation";
 import toast from "react-hot-toast";
-import Tippy from "@tippyjs/react";
 
 interface GameNavbarProps {
   gameMode: GameMode;
@@ -102,7 +101,6 @@ const GameNavbar = ({}: GameNavbarProps) => {
       icon: LogOut,
       label: "Logout",
       action: handleLogout,
-      tooltip: "Logout",
     },
   ];
 
@@ -172,21 +170,19 @@ const GameNavbar = ({}: GameNavbarProps) => {
                     className="absolute right-0 mt-2 w-48 bg-light-background dark:bg-dark-background border border-light-border dark:border-dark-border rounded-lg shadow-lg z-50"
                   >
                     <div className="py-2">
-                      {menuItems.map(
-                        ({ icon: Icon, label, action, tooltip }) => (
-                          <button
-                            key={tooltip}
-                            onClick={() => {
-                              setIsMobileMenuOpen(false);
-                              action();
-                            }}
-                            className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
-                          >
-                            <Icon className="w-5 h-5" />
-                            <span>{label}</span>
-                          </button>
-                        )
-                      )}
+                      {menuItems.map(({ icon: Icon, label, action }) => (
+                        <button
+                          key={label}
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            action();
+                          }}
+                          className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+                        >
+                          <Icon className="w-5 h-5" />
+                          <span>{label}</span>
+                        </button>
+                      ))}
                       <button
                         onClick={() => {
                           setIsMobileMenuOpen(false);
@@ -212,20 +208,15 @@ const GameNavbar = ({}: GameNavbarProps) => {
           )}
 
           {!isMobile &&
-            menuItems.map(({ icon: Icon, action, tooltip }) => (
-              <Tippy
-                key={tooltip}
-                content={tooltip}
-                animation="scale"
-                delay={[100, 0]}
+            menuItems.map(({ icon: Icon, label, action }) => (
+              <button
+                key={label}
+                onClick={action}
+                className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                title={label}
               >
-                <button
-                  onClick={action}
-                  className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
-                >
-                  <Icon className="w-6 h-6" />
-                </button>
-              </Tippy>
+                <Icon className="w-6 h-6" />
+              </button>
             ))}
         </div>
       </div>
