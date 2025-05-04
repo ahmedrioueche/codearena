@@ -29,6 +29,7 @@ export const topics: Topic[] = [
   { id: "algorithms", name: "Algorithms" },
   { id: "data-structures", name: "Data Structures" },
   { id: "problem-solving", name: "Problem Solving" },
+  { id: "oop", name: "Object Oriented Programming" },
   { id: "debugging", name: "Debugging" },
   { id: "optimization", name: "Optimization" },
   { id: "graph-theory", name: "Graph Theory" },
