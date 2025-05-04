@@ -3,6 +3,7 @@ import CustomSelect from "../../../../../../components/ui/CustomSelect";
 import { updateUser } from "../../../../../../api/user";
 import { ExperienceLevel, UserUpdate } from "../../../../../../types/user";
 import { Loader2 } from "lucide-react";
+import { capitalize } from "../../../../../../utils/helper";
 
 interface UserDetailsProps {
   onSuccess: () => void;
@@ -18,13 +19,12 @@ const UserDetails = ({ onSuccess }: UserDetailsProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("User details submitted:", formData);
     setIsSubmitting(true);
     try {
       await updateUser(formData);
       onSuccess();
     } catch (e) {
-      console.log(e);
+      location.href = "/";
       return e;
     } finally {
       setIsSubmitting(false);
@@ -95,7 +95,7 @@ const UserDetails = ({ onSuccess }: UserDetailsProps) => {
               { value: "Intermediate", label: "Intermediate" },
               { value: "Senior", label: "Senior" },
             ]}
-            selectedOption={formData.experienceLevel || ""}
+            selectedOption={capitalize(formData.experienceLevel) || ""}
             onChange={handleExperienceLevelChange}
             bgColor="bg-white/5 dark:bg-white/5"
           />

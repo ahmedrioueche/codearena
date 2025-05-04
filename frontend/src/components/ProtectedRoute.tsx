@@ -13,7 +13,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
   const { pathname } = useLocation();
   const { setCurrentUser } = useAppContext();
   const [authStatus, setAuthStatus] = useState<
-    "loading" | "authenticated" | "unauthenticated"
+    "loading" | "authenticated" | "unauthenticated" | "unverified"
   >("loading");
 
   useEffect(() => {
@@ -22,6 +22,10 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
         // First attempt to get user
         const user = await getUser();
         setCurrentUser(user);
+        if (!user?.isVerified) {
+          setAuthStatus("unverified");
+          return;
+        }
         setAuthStatus("authenticated");
       } catch (error: any) {
         // Check if error is 401 Unauthorized
@@ -53,6 +57,11 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
 
   if (authStatus === "unauthenticated") {
     const redirectUrl = `/auth/login?redirect=${encodeURIComponent(pathname)}`;
+    return <Navigate to={redirectUrl} />;
+  }
+
+  if (authStatus === "unverified") {
+    const redirectUrl = `/auth/verify-email`;
     return <Navigate to={redirectUrl} />;
   }
 

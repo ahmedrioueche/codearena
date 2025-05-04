@@ -23,7 +23,7 @@ const TestCaseList = ({
 }: TestCaseListProps) => (
   <div className="space-y-4 mb-6">
     {testCases.length === 0 ? (
-      <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg">
+      <div className="text-center py-8  rounded-lg">
         <p className="mb-4">No test cases yet.</p>
 
         <Button onClick={addTestCase} variant="primary">

@@ -118,3 +118,15 @@ export interface SolutionValidationResult {
   comments: string; // Remarks about the solution
   improvements?: string[]; // Suggestions to improve the solution
 }
+
+export interface ScoreBreakdown {
+  correctnessScore: number;
+  efficiencyScore: number;
+  codeQualityScore: number;
+  hintsPenalty: number;
+  nextLineHelpPenalty: number;
+  timePenalty: number;
+  syntaxMistakesPenalty: number;
+  logicMistakesPenalty: number;
+  totalScore: number;
+}

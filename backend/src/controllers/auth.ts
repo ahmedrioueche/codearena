@@ -45,6 +45,7 @@ export class AuthController {
       res.status(201).json({
         user: { email: user.email, id: user._id },
         accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
       });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
@@ -59,6 +60,7 @@ export class AuthController {
       res.status(200).json({
         user: { email: user.email, id: user._id },
         accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
       });
     } catch (error: any) {
       res.status(401).json({ message: error.message });

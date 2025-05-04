@@ -13,9 +13,7 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const fullOtp = otp.join("");
+  const verifyOtpAndSubmit = async (fullOtp: string) => {
     setIsSubmitting(true);
     try {
       await verifyOtp(email, fullOtp);
@@ -28,10 +26,36 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
     }
   };
 
-  // Handle OTP input change
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const fullOtp = otp.join("");
+    if (fullOtp.length === 6) {
+      await verifyOtpAndSubmit(fullOtp);
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text/plain").trim();
+    const pasteDigits = pasteData.replace(/\D/g, "").split("").slice(0, 6);
+
+    if (pasteDigits.length === 6) {
+      const newOtp = [...otp];
+      pasteDigits.forEach((digit, index) => {
+        newOtp[index] = digit;
+      });
+      setOtp(newOtp);
+
+      // Auto-submit if all digits are filled
+      if (newOtp.every((digit) => digit !== "")) {
+        const fullOtp = newOtp.join("");
+        verifyOtpAndSubmit(fullOtp);
+      }
+    }
+  };
+
   const handleOtpChange = (index: number, value: string) => {
     if (/^\d*$/.test(value) && value.length <= 1) {
-      // Allow only digits and limit to 1 character
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
@@ -41,14 +65,23 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
         const nextInput = document.getElementById(`otp-input-${index + 1}`);
         if (nextInput) nextInput.focus();
       }
+
+      // Auto-submit if all digits are filled
+      if (newOtp.every((digit) => digit !== "")) {
+        const fullOtp = newOtp.join("");
+        verifyOtpAndSubmit(fullOtp);
+      }
     }
   };
 
   const handleResend = async () => {
     try {
-      return await sendOtp(email);
+      const response = await sendOtp(email);
+      toast.success("Code was resent successfully");
+      return response;
     } catch (e) {
       console.log("OTP resend failed", e);
+      toast.error("Code resend failed");
     }
   };
 
@@ -88,7 +121,7 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg md:px-6">
         <div className="bg-black/40 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl">
           {/* Logo */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <div className="relative inline-block">
               <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-dancing">
                 CodeArena
@@ -109,6 +142,7 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
               <p className="flex flex-col text-white text-center mb-4">
                 <span>Please enter the code sent to </span>
                 <span>{email}</span>
+                <span>If not found, check your spam folder</span>
               </p>
               <div className="flex justify-center gap-3 max-w-lg">
                 {Array.from({ length: 6 }).map((_, index) => (
@@ -119,6 +153,7 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
                     className="w-9 h-9 md:w-10 md:h-10 text-center bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     value={otp[index]}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onPaste={handlePaste}
                     maxLength={1}
                     autoFocus={index === 0}
                   />
@@ -128,6 +163,7 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
             <button
               type="submit"
               className="w-full max-w-xs py-3 px-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:opacity-90 transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
@@ -136,7 +172,7 @@ const Otp = ({ email, onBack, onSuccess }: OtpProps) => {
                 </span>
               ) : (
                 "Verify OTP"
-              )}{" "}
+              )}
             </button>
           </form>
 

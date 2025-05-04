@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { logout } from "../../../../api/auth";
 import { APP_PAGES } from "../../../../constants/navigation";
 import toast from "react-hot-toast";
+import Tippy from "@tippyjs/react";
 
 interface GameNavbarProps {
   gameMode: GameMode;
@@ -96,7 +97,14 @@ const GameNavbar = ({}: GameNavbarProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const menuItems = [{ icon: LogOut, label: "Logout", action: handleLogout }];
+  const menuItems = [
+    {
+      icon: LogOut,
+      label: "Logout",
+      action: handleLogout,
+      tooltip: "Logout",
+    },
+  ];
 
   return (
     <nav className="fixed p-0 top-0 left-0 w-full bg-light-background dark:bg-dark-background border-b border-white/10 shadow-lg z-50">
@@ -113,6 +121,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
             <button
               onClick={handleFullScreen}
               className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+              title={isFullScreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
               {isFullScreen ? (
                 <Minimize className="w-6 h-6" />
@@ -130,6 +139,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                   handleToggleProblem();
                 }}
                 className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                title="Problem"
               >
                 <BookOpen className="w-6 h-6" />
               </button>
@@ -140,6 +150,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                   handleToggleControlsMenu();
                 }}
                 className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                title="Controls"
               >
                 <Sliders className="w-6 h-6" />
               </button>
@@ -150,6 +161,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
                   id="mobile-menu-button"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="mt-1 text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                  title="Menu"
                 >
                   <MoreVertical className="w-6 h-6" />
                 </button>
@@ -157,28 +169,33 @@ const GameNavbar = ({}: GameNavbarProps) => {
                 {isMobileMenuOpen && (
                   <div
                     id="mobile-menu"
-                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-black border border-light-border dark:border-dark-border rounded-lg shadow-lg z-50"
+                    className="absolute right-0 mt-2 w-48 bg-light-background dark:bg-dark-background border border-light-border dark:border-dark-border rounded-lg shadow-lg z-50"
                   >
                     <div className="py-2">
-                      {menuItems.map(({ icon: Icon, label, action }) => (
-                        <button
-                          key={label}
-                          onClick={() => {
-                            setIsMobileMenuOpen(false);
-                            action();
-                          }}
-                          className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
-                        >
-                          <Icon className="w-5 h-5" />
-                          <span>{label}</span>
-                        </button>
-                      ))}
+                      {menuItems.map(
+                        ({ icon: Icon, label, action, tooltip }) => (
+                          <button
+                            key={tooltip}
+                            onClick={() => {
+                              setIsMobileMenuOpen(false);
+                              action();
+                            }}
+                            className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+                          >
+                            <Icon className="w-5 h-5" />
+                            <span>{label}</span>
+                          </button>
+                        )
+                      )}
                       <button
                         onClick={() => {
                           setIsMobileMenuOpen(false);
                           handleFullScreen();
                         }}
                         className="w-full px-4 py-2 flex items-center space-x-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+                        title={
+                          isFullScreen ? "Exit fullscreen" : "Enter fullscreen"
+                        }
                       >
                         {isFullScreen ? (
                           <Minimize className="w-5 h-5" />
@@ -195,14 +212,20 @@ const GameNavbar = ({}: GameNavbarProps) => {
           )}
 
           {!isMobile &&
-            menuItems.map(({ icon: Icon, label, action }) => (
-              <button
-                key={label}
-                onClick={action}
-                className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+            menuItems.map(({ icon: Icon, action, tooltip }) => (
+              <Tippy
+                key={tooltip}
+                content={tooltip}
+                animation="scale"
+                delay={[100, 0]}
               >
-                <Icon className="w-6 h-6" />
-              </button>
+                <button
+                  onClick={action}
+                  className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                >
+                  <Icon className="w-6 h-6" />
+                </button>
+              </Tippy>
             ))}
         </div>
       </div>

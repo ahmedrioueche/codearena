@@ -27,7 +27,7 @@ authAxios.interceptors.response.use(
         return authAxios(originalRequest);
       } catch (refreshError) {
         // Redirect to login if refresh fails
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
         return Promise.reject(refreshError);
       }
     }

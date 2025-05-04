@@ -21,7 +21,7 @@ const userSchema = new Schema<IUserDocument>(
       type: String,
       required: true,
       minlength: 8,
-      select: true,
+      select: false,
     },
     fullName: {
       type: String,
@@ -29,6 +29,10 @@ const userSchema = new Schema<IUserDocument>(
       unique: false,
       trim: true,
       lowercase: true,
+    },
+    isVerified: {
+      type: Boolean,
+      required: false,
     },
     age: {
       type: Number,
@@ -39,6 +43,12 @@ const userSchema = new Schema<IUserDocument>(
       type: String,
       required: false,
       unique: false,
+    },
+    refreshTokens: {
+      type: [String],
+      select: false,
+      index: true,
+      default: [],
     },
   },
   {

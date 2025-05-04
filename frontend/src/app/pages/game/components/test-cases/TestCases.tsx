@@ -155,7 +155,7 @@ function TestCases({
 
   return (
     <div
-      className={`relative h-full transition-all duration-300 flex flex-col md:pr-10 mt-4 pb-10 dark:text-white text-black ${
+      className={`relative h-full transition-all duration-300 flex flex-col mt-4 pb-10 dark:text-white text-black ${
         isCollapsed ? "w-12" : "w-full"
       }`}
       role="region"
@@ -211,7 +211,7 @@ function TestCases({
                 className="w-full md:w-auto px-2"
               >
                 <PlusCircle />
-                <span className="ml-2">Add Test</span>
+                <span className="ml-2">Add</span>
               </Button>
 
               <Button
@@ -232,7 +232,7 @@ function TestCases({
                 ) : (
                   <RefreshCw />
                 )}
-                <span className="ml-2">Validate Tests</span>
+                <span className="ml-2">Validate</span>
               </Button>
               <Button
                 onClick={() => {
@@ -247,7 +247,7 @@ function TestCases({
                 ) : (
                   <RefreshCw />
                 )}
-                <span className="ml-2">Run Tests</span>
+                <span className="ml-2">Run</span>
               </Button>
             </div>
           </div>

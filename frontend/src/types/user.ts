@@ -8,6 +8,7 @@ export interface User {
   email: string;
   password: string;
   createdAt: string;
+  isVerified?: boolean;
   score: number;
   rank: Rank;
   accuracy: number;
@@ -21,6 +22,7 @@ export interface UserCreate {
 }
 
 export interface UserUpdate {
+  isVerified?: boolean;
   password?: string;
   fullName?: string;
   age?: string;

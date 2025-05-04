@@ -45,7 +45,7 @@ const Settings = ({ isCollapsed, onToggleCollapse }: SettingsProps) => {
   return (
     <>
       <div
-        className={`relative h-full transition-all duration-300 flex flex-col md:pr-10 ${
+        className={`relative h-full transition-all duration-300 flex flex-col  ${
           isCollapsed ? "w-12" : "w-full"
         }`}
         role="region"
@@ -54,20 +54,23 @@ const Settings = ({ isCollapsed, onToggleCollapse }: SettingsProps) => {
         <div className="p-1 md:p-4 md:pt-6 overflow-auto">
           {(!isCollapsed || !isMobile) && (
             <div className="space-y-6">
-              <div className="flex flex-row justify-between">
-                <label className="text-sm font-medium text-light-foreground dark:text-white">
-                  Language
+              <div className="flex flex-row items-center justify-between mb-4">
+                <label className="text-lg font-medium text-light-foreground dark:text-white">
+                  Settings
                 </label>
                 {!isCollapsed && !isMobile && (
                   <IconButton onClick={onToggleCollapse} icon={ChevronRight} />
                 )}
               </div>
 
+              <label className="text-base font-medium text-light-foreground dark:text-white">
+                Language
+              </label>
               <LanguageSelector settings={settings} setSettings={setSettings} />
 
               {/* Topics */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-light-foreground dark:text-white">
+                <label className="text-base font-medium text-light-foreground dark:text-white">
                   Topics
                 </label>
                 <div
@@ -102,7 +105,7 @@ const Settings = ({ isCollapsed, onToggleCollapse }: SettingsProps) => {
 
               {/* Difficulty Selection */}
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-light-foreground dark:text-dark-foreground">
+                <label className="block text-base font-medium text-light-foreground dark:text-dark-foreground">
                   Difficulty Level
                 </label>
                 <RadioGroup
@@ -123,7 +126,7 @@ const Settings = ({ isCollapsed, onToggleCollapse }: SettingsProps) => {
               </div>
               {/* Time Limit */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-light-foreground dark:text-white">
+                <label className="text-base font-medium text-light-foreground dark:text-white">
                   Time Limit
                 </label>
                 <div

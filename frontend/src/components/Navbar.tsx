@@ -58,7 +58,7 @@ const Navbar = ({}: {}) => {
         <div className="flex items-center">
           <button
             onClick={handleLogout}
-            className="text-light-primary dark:text-dark-primary hover:scale-110 transition-transform"
+            className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
             title="Logout"
           >
             <LogOut className="w-6 h-6" />

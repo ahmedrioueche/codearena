@@ -1,15 +1,14 @@
 import { User, UserUpdate } from "../types/user";
-import { handleFetch } from "./fetch";
+import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const getUser = async (): Promise<User> => {
   try {
-    return await handleFetch(`${API_BASE_URL}/user/me`, {
-      method: "GET",
+    const response = await axios.get<User>(`${API_BASE_URL}/user/me`, {
       withCredentials: true,
-      redirectOnUnAuthorized: true,
     });
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -17,18 +16,21 @@ export const getUser = async (): Promise<User> => {
 
 export const updateUser = async (data: UserUpdate): Promise<User> => {
   try {
-    console.log("update user", data);
-    return await handleFetch(`${API_BASE_URL}/user/me`, {
-      method: "PATCH",
-      data: {
-        fullName: data.fullName,
-        age: data.age,
-        experienceLevel: data.experienceLevel,
+    const response = await axios.patch<User>(
+      `${API_BASE_URL}/user/me`,
+      {
+        fullName: data?.fullName,
+        isVerified: data?.isVerified,
+        age: data?.age,
+        experienceLevel: data?.experienceLevel,
       },
-      withCredentials: true,
-      redirectOnUnAuthorized: true,
-    });
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
   } catch (error) {
+    // Axios error will contain status code and response data
     throw error;
   }
 };

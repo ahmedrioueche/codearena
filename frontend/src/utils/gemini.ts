@@ -20,7 +20,6 @@ const geminiGetAnswer = async (prompt: string) => {
 export const promptAi = async (prompt: string) => {
   try {
     const fullPrompt = MAIN_PROMPT + " " + prompt;
-    console.log({ fullPrompt });
     const response = geminiGetAnswer(fullPrompt);
     return response;
   } catch (e) {

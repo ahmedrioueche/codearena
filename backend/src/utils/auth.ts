@@ -1,11 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { IAuthTokens } from '../types/auth';
-
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'your-access-secret';
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your-refresh-secret';
-const ACCESS_TOKEN_EXPIRY = '15m';
-const REFRESH_TOKEN_EXPIRY = '7d';
+import { UserModel } from '../models/user';
 
 export class AuthUtils {
   static async hashPassword(password: string): Promise<string> {
@@ -17,30 +13,62 @@ export class AuthUtils {
     return await bcrypt.compare(inputPassword, userPassword);
   }
 
-  static generateTokens(userId: string): IAuthTokens {
-    const accessToken = jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {
-      expiresIn: ACCESS_TOKEN_EXPIRY,
+  static async generateAndStoreTokens(userId: string): Promise<IAuthTokens> {
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+      throw new Error('ACCESS_TOKEN_SECRET not configured');
+    }
+    const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET!, {
+      expiresIn: '15m',
+    });
+    if (!process.env.REFRESH_TOKEN_SECRET) {
+      throw new Error('REFRESH_TOKEN_SECRET not configured');
+    }
+    const refreshToken = jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET!, {
+      expiresIn: '7d',
     });
 
-    const refreshToken = jwt.sign({ userId }, REFRESH_TOKEN_SECRET, {
-      expiresIn: REFRESH_TOKEN_EXPIRY,
-    });
+    // Properly store the refresh token
+    await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          refreshTokens: {
+            $each: [refreshToken],
+            $position: 0,
+            $slice: 5, // Keep only last 5 refresh tokens
+          },
+        },
+      },
+      { new: true },
+    );
 
     return { accessToken, refreshToken };
   }
 
   static verifyAccessToken(token: string): { userId: string } | null {
     try {
-      return jwt.verify(token, ACCESS_TOKEN_SECRET) as { userId: string };
+      if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('ACCESS_TOKEN_SECRET not configured');
+      }
+      return jwt.verify(token.trim(), process.env.ACCESS_TOKEN_SECRET, {
+        algorithms: ['HS256'],
+      }) as { userId: string };
     } catch (error) {
+      console.error('Access token verification failed:', error);
       return null;
     }
   }
 
   static verifyRefreshToken(token: string): { userId: string } | null {
     try {
-      return jwt.verify(token, REFRESH_TOKEN_SECRET) as { userId: string };
+      if (!process.env.REFRESH_TOKEN_SECRET) {
+        throw new Error('REFRESH_TOKEN_SECRET not configured');
+      }
+      return jwt.verify(token.trim(), process.env.REFRESH_TOKEN_SECRET, {
+        algorithms: ['HS256'],
+      }) as { userId: string };
     } catch (error) {
+      console.error('Refresh token verification failed:', error);
       return null;
     }
   }

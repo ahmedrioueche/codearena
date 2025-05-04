@@ -2,6 +2,11 @@ import { Award, Clock, Zap } from "lucide-react";
 import { DifficultyLevel, GameMode } from "../types/game/game";
 import { Language } from "../types/general";
 
+export function capitalize(str?: string): string {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 export const getLanguages = (dict: Record<string, any>): Language[] => {
   return Object.keys(dict) as Language[];
 };

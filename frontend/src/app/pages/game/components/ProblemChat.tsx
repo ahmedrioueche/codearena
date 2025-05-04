@@ -179,7 +179,7 @@ const ProblemChat: React.FC<ProblemChatProps> = ({
 
       {/* Chat Area */}
       <div
-        className={`flex flex-col h-full min-h-[540px] transition-all bg-gray-100 dark:bg-gray-800 rounded-lg ${
+        className={`flex flex-col h-full min-h-[540px] transition-all bg-gray-100 dark:bg-dark-background rounded-lg ${
           isCollapsed ? "hidden" : "block"
         }`}
       >

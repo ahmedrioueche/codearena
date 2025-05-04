@@ -66,7 +66,10 @@ export const verifyOtp = async (email: string, otp: string) => {
 
 export const refreshToken = async () => {
   try {
-    const response = await authAxios.post("/auth/refresh");
+    const response = await authAxios.post("/auth/refresh", {
+      withCredentials: true,
+    });
+
     return response.data;
   } catch (e) {
     throw e;

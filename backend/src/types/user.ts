@@ -6,11 +6,12 @@ export interface IUser {
   email: string;
   password: string;
   fullName: string;
+  isVerified: boolean;
   age: number;
   experienceLevel: ExperienceLevel;
-
   createdAt?: Date;
   updatedAt?: Date;
+  refreshTokens: string[];
 }
 export interface IUserDocument extends IUser, Document {}
 

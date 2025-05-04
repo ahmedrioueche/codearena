@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, HelpCircle, X } from "lucide-react";
+import { ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
 import { SCORE_VALUES } from "../../../../constants/game";
 import useScreen from "../../../../hooks/useScreen";
+import IconButton from "../../../../components/ui/IconButton";
 
 interface HelpProps {
   isCollapsed: boolean;
@@ -24,43 +25,27 @@ const Help = ({ isCollapsed, onToggleCollapse }: HelpProps) => {
 
   return (
     <div
-      className={`relative h-full transition-all duration-300 flex flex-col ${
+      className={`relative h-full transition-all duration-300 flex flex-col text-light-foreground dark:text-white ${
         isCollapsed ? "w-12" : "w-full"
       }`}
     >
-      <div className="p-1 md:p-6 overflow-auto">
-        {!isCollapsed && (
-          <div className="space-y-4">
-            {!isMobile && (
-              <div className="flex items-center justify-between border-b border-light-border dark:border-dark-border pb-2">
-                <div className="flex flex-row space-x-2">
-                  <HelpCircle
-                    size={22}
-                    className="text-light-accent dark:text-dark-accent mt-0.5"
-                  />
-                  <h2 className="text-xl font-stix text-light-foreground dark:text-dark-foreground">
-                    Game Guide
-                  </h2>
-                </div>
+      <div className="p-1 md:p-4 md:pt-6 overflow-auto">
+        {(!isCollapsed || !isMobile) && (
+          <div className="space-y-6">
+            <div className="flex flex-row items-center justify-between">
+              <label className="text-lg font-medium ">Game Guide</label>
+              {!isCollapsed && !isMobile && (
+                <IconButton onClick={onToggleCollapse} icon={ChevronRight} />
+              )}
+            </div>
 
-                <button
-                  onClick={onToggleCollapse}
-                  className="p-2 text-light-foreground dark:text-dark-foreground hover:bg-light-background dark:hover:bg-dark-background rounded-full transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-
-            {/* Score Section */}
+            {/* Rest of your existing Help component content remains the same */}
             <div className="pt-2">
               <button
                 onClick={() => toggleSection("score")}
                 className="w-full flex items-center justify-between group py-2"
               >
-                <h3 className="text-xl font-stix text-light-foreground dark:text-dark-foreground">
-                  Scoring System
-                </h3>
+                <h3 className="text-base font-stix">Scoring System</h3>
                 <div className="transform transition-transform duration-200">
                   {openSections.score ? (
                     <ChevronUp className="w-5 h-5 text-light-primary dark:text-dark-primary" />
@@ -77,7 +62,7 @@ const Help = ({ isCollapsed, onToggleCollapse }: HelpProps) => {
                     : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="py-4 space-y-4 text-light-foreground dark:text-dark-foreground">
+                <div className="py-4 space-y-4">
                   <div className="bg-light-background/50 dark:bg-dark-background/50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-2">
                       Base Score Components
@@ -133,9 +118,7 @@ const Help = ({ isCollapsed, onToggleCollapse }: HelpProps) => {
                 onClick={() => toggleSection("howToPlay")}
                 className="w-full flex items-center justify-between group py-2"
               >
-                <h3 className="text-xl font-stix text-light-foreground dark:text-dark-foreground">
-                  How to Play
-                </h3>
+                <h3 className="text-base font-stix">How to Play</h3>
                 <div className="transform transition-transform duration-200">
                   {openSections.howToPlay ? (
                     <ChevronUp className="w-5 h-5 text-light-primary dark:text-dark-primary" />
@@ -167,9 +150,7 @@ const Help = ({ isCollapsed, onToggleCollapse }: HelpProps) => {
                 onClick={() => toggleSection("tips")}
                 className="w-full flex items-center justify-between group py-2"
               >
-                <h3 className="text-xl font-stix text-light-foreground dark:text-dark-foreground">
-                  Pro Tips
-                </h3>
+                <h3 className="text-base font-stix">Pro Tips</h3>
                 <div className="transform transition-transform duration-200">
                   {openSections.tips ? (
                     <ChevronUp className="w-5 h-5 text-light-primary dark:text-dark-primary" />
@@ -186,7 +167,7 @@ const Help = ({ isCollapsed, onToggleCollapse }: HelpProps) => {
                     : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="py-4 space-y-3 text-light-foreground dark:text-dark-foreground">
+                <div className="py-4 space-y-3 ">
                   <p>• Consider edge cases in your solution</p>
                   <p>• Test with various input sizes</p>
                   <p>• Review time complexity before submitting</p>

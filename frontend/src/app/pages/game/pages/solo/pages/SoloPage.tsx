@@ -86,7 +86,7 @@ const SoloPage = () => {
   const [timer, setTimer] = useState<number>(0);
   const [nextLineHelpCount, setNextLineHelpCount] = useState(0);
   const [problemScore, setProblemScore] = useState(0);
-  const { calculateScore } = useScore("solo");
+  const { calculateScore } = useScore();
   const { isMobile } = useScreen();
   const isProblemOpenOnMobile = useSelector(
     (state: RootState) => state.problemControl.isProblemToggled
@@ -185,15 +185,14 @@ const SoloPage = () => {
       setSolutionValidationResult(result);
       setIsGameStarted(false);
       if (result) {
-        const score = calculateScore(
+        const { totalScore } = calculateScore(
           problem?.points,
           result,
           hints.length,
           nextLineHelpCount,
           timer
         );
-        console.log({ score });
-        setProblemScore(score);
+        setProblemScore(totalScore);
         await updateUserScore();
       }
     } catch (e) {

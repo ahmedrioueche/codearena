@@ -35,6 +35,7 @@ const SignupPage = () => {
           <EmailVerification
             email={user?.email || ""}
             onSuccess={() => handleNavigation("userDetails")}
+            onBack={() => handleNavigation("signup")}
           />
         );
       case "userDetails":

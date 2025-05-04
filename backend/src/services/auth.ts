@@ -23,7 +23,7 @@ export class AuthService {
     });
 
     // 4. Generate tokens
-    const tokens = AuthUtils.generateTokens(user._id.toString());
+    const tokens = await AuthUtils.generateAndStoreTokens(user._id.toString());
 
     return { user, tokens };
   }
@@ -44,7 +44,7 @@ export class AuthService {
     }
 
     // 3. Generate tokens
-    const tokens = AuthUtils.generateTokens(user._id.toString());
+    const tokens = await AuthUtils.generateAndStoreTokens(user._id.toString());
 
     return { user, tokens };
   }
@@ -64,6 +64,10 @@ export class AuthService {
   }
   static async refreshTokens(refreshToken: string): Promise<IAuthTokens> {
     try {
+      if (!process.env.REFRESH_TOKEN_SECRET) {
+        throw new Error('REFRESH_TOKEN_SECRET is not defined');
+      }
+
       // 1. Verify token
       const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as {
         userId: string;
@@ -86,6 +90,12 @@ export class AuthService {
 
       return tokens;
     } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new Error('Refresh token expired');
+      }
+      if (error instanceof jwt.JsonWebTokenError) {
+        throw new Error('Invalid token signature');
+      }
       throw new Error('Invalid refresh token');
     }
   }

@@ -32,11 +32,14 @@ import CodeEditor from "./CodeEditor";
 import useScreen from "../../../../hooks/useScreen";
 import { convertSeconds } from "../../../../utils/helper";
 import SolutionChat from "./SolutionChat";
-import ConfirmGettingSolutionModal from "./ui/ConfirmGettingSolutionModal";
 import { ActionResult } from "../../../../types/general";
 import Button from "../../../../components/ui/Button";
 import TimeProgressBar from "./ui/TimeProgressBar";
+
 const ScoreDetails = lazy(() => import("../components/ScoreDetails"));
+const ConfirmGettingSolutionModal = lazy(
+  () => import("./ui/ConfirmGettingSolutionModal")
+);
 
 const GameFooter = ({
   problem,

@@ -5,9 +5,7 @@ import { UserModel } from '../models/user';
 export class UserController {
   static getMe = async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const user = await UserModel.findById(req.user.userId).select(
-        'username email fullName age experienceLevel',
-      );
+      const user = await UserModel.findById(req.user.userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -19,9 +17,8 @@ export class UserController {
 
   static updateMe = async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { username, fullName, age, experienceLevel } = req.body;
+      const { username, fullName, age, experienceLevel, isVerified } = req.body;
 
-      console.log({ username, fullName, age, experienceLevel });
       // Validate experienceLevel if provided
       if (experienceLevel && !['beginner', 'intermediate', 'expert'].includes(experienceLevel)) {
         return res.status(400).json({ message: 'Invalid experience level' });
@@ -47,10 +44,11 @@ export class UserController {
           fullName,
           age,
           experienceLevel,
+          isVerified,
           updatedAt: new Date(),
         },
         { new: true, runValidators: true },
-      ).select('username email fullName age experienceLevel createdAt updatedAt');
+      ).select('username email fullName age experienceLevel isVerified createdAt updatedAt');
 
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
