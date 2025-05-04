@@ -12,8 +12,5 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "class-variance-authority": "^0.6.0"
   }
 }

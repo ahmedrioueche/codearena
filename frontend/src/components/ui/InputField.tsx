@@ -1,5 +1,4 @@
 import React, { forwardRef, useState } from "react";
-import { cva } from "class-variance-authority";
 import { ReactNode } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -12,25 +11,11 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   width?: string;
 }
 
-const inputStyles = cva(
-  "w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent focus:ring-blue-500 transition-all",
-  {
-    variants: {
-      disabled: {
-        true: "opacity-50 cursor-not-allowed",
-      },
-      error: {
-        true: "border-red-400",
-      },
-    },
-  }
-);
-
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   (
     {
       label,
-      className,
+      className = "",
       error,
       disabled = false,
       width,
@@ -59,6 +44,17 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 
     const finalRightIcon = rightIcon || defaultRightIcon;
 
+    // Base classes
+    const baseClasses =
+      "w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent focus:ring-blue-500 transition-all";
+
+    // Conditional classes
+    const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
+    const errorClasses = error ? "border-red-400" : "";
+
+    // Combine all classes
+    const inputClasses = `${baseClasses} ${disabledClasses} ${errorClasses} ${className}`;
+
     return (
       <div className="space-y-1" style={{ width }}>
         {label && (
@@ -72,11 +68,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             ref={ref}
             disabled={disabled}
             type={computedType}
-            className={inputStyles({
-              disabled,
-              error: Boolean(error),
-              className,
-            })}
+            className={inputClasses}
             {...props}
           />
           {finalRightIcon && (
