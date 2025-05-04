@@ -106,7 +106,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
 
   return (
     <nav className="fixed p-0 top-0 left-0 w-full bg-light-background dark:bg-dark-background border-b border-white/10 shadow-lg z-50">
-      <div className="w-full px-6 py-4 flex items-center justify-between">
+      <div className="w-full md:px-6 px-4 py-4 flex items-center justify-between">
         <div className="flex flex-row space-x-2 items-center">
           <img src={logo} alt="CodeArena" className="h-9 w-9" />
           <h1 className="md:text-2xl text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-dancing">
