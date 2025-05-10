@@ -125,7 +125,7 @@ const SoloPage = () => {
         problem?.language || matchConfig?.language,
         problem?.difficulty
       );
-
+      setCurrentCode(problem?.starterCode || "");
       setTimeout(() => {
         setIsisNewProblem(false);
       }, 3000);
