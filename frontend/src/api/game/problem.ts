@@ -23,6 +23,7 @@ export const AiGetProblem = async (
   try {
     const prompt = `Excluding these problems and problems close to them: ${exludedProblems},
       only exclude the problem if the language and difficulty match the ones bellow.
+      excluding the problems is very important!, if not problem is found, you can give a problem in a topic thats close to the chosen ones
       Generate a programming problem with the following details:
       - Topics: ${topic} //choose one of the topics.
       - Language: ${language}
