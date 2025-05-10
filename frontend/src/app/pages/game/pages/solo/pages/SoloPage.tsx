@@ -140,7 +140,7 @@ const SoloPage = () => {
 
   const handleGetNewProblem = async () => {
     setIsGameStarted(false);
-
+    setIsProblemModalOpen(false);
     setSolutionValidationResult(undefined);
     setIsisNewProblem(true);
     setHints([]);
