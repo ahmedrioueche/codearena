@@ -5,6 +5,7 @@ import ModeCard from "./ModeCard";
 import SoloMatchSetupModal from "./gameSetup/SoloSetupModal";
 import BattleModeSetupModal from "./gameSetup/BattleSetupModal";
 import CollabModeSetupModal from "./gameSetup/CollabSetupModal";
+import SaveTheCodeSetup from "./SaveTheCodeSetup";
 
 const ModesContainer = () => {
   const [activeMode, setActiveMode] = useState<GameMode | "null">("null");
@@ -34,6 +35,10 @@ const ModesContainer = () => {
       />
       <CollabModeSetupModal
         isOpen={activeMode === "collab"}
+        onClose={() => setActiveMode("null")}
+      />
+      <SaveTheCodeSetup
+        isOpen={activeMode === "save-the-code"}
         onClose={() => setActiveMode("null")}
       />
     </div>

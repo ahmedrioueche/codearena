@@ -65,7 +65,7 @@ const SoloMatchSetupModal: React.FC<{
         {/* Footer */}
         <div className="flex items-center justify-end gap-4 p-6 border-t border-gray-700 bg-gray-900/80 backdrop-blur-sm">
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            Close
           </Button>
           <Button
             onClick={handleStartGame}
