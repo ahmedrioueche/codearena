@@ -129,4 +129,5 @@ export interface ScoreBreakdown {
   syntaxMistakesPenalty: number;
   logicMistakesPenalty: number;
   totalScore: number;
+  isTimeOver: boolean;
 }

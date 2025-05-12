@@ -39,6 +39,8 @@ const ProblemModal = lazy(() => import("../../../components/ProblemModal"));
 const LeaveConfirmationModal = lazy(
   () => import("../../../components/ui/LeaveConfirmationModal")
 );
+const ShowTimeOverModal = lazy(() => import("../components/ShowTimeOverModal"));
+
 const Settings = lazy(() => import("../../../components/Settings"));
 const Help = lazy(() => import("../../../components/Help"));
 const TestCases = lazy(
@@ -84,6 +86,7 @@ const SoloPage = () => {
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [timer, setTimer] = useState<number>(0);
+  const [showTimeOver, setShowTimeOver] = useState(false);
   const [nextLineHelpCount, setNextLineHelpCount] = useState(0);
   const [problemScore, setProblemScore] = useState(0);
   const { calculateScore } = useScore();
@@ -193,7 +196,8 @@ const SoloPage = () => {
           result,
           hints.length,
           nextLineHelpCount,
-          timer
+          timer,
+          problem?.averageTime!
         );
         console.log("totalScore", totalScore);
         setProblemScore(totalScore);
@@ -237,6 +241,10 @@ const SoloPage = () => {
     } else {
       await handleGetNewProblem();
     }
+  };
+
+  const handleTimeOver = () => {
+    setShowTimeOver(true);
   };
 
   useEffect(() => {
@@ -609,6 +617,7 @@ const SoloPage = () => {
           validationError={error}
           onNewProblem={handleGetNewProblem}
           onGetSolution={handleGetSolution}
+          onTimeOver={handleTimeOver}
           timer={timer}
           hintCount={hints?.length}
           nextLineHelpCount={nextLineHelpCount}
@@ -635,6 +644,12 @@ const SoloPage = () => {
           hints={hints}
           isHintLoading={loadingHint}
           onGetHint={handleGetHint}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ShowTimeOverModal
+          isOpen={showTimeOver}
+          onClose={() => setShowTimeOver(false)}
         />
       </Suspense>
     </div>

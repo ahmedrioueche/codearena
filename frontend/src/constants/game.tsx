@@ -109,27 +109,27 @@ export const SCORE_VALUES = {
   defaultPoints: 10, // Default points if problemPoints is undefined
   correctnessWeight: 0.5, // Correctness contributes 50% of the score
   efficiencyWeights: {
-    Excellent: 0.2,
-    Good: 0.15,
-    Average: 0.1,
-    Poor: 0.05,
-  },
-  penalties: {
-    hint: 0.1, // 10% of points per hint
-    nextLineHelp: 0.2, // 15% of points per next-line help
-    syntaxMistake: 0.2, // 5% of points per syntax mistake
-    logicMistake: 0.25, // 10% of points per logic mistake
-    timePerSecond: 0.01, // 1% of points per second after threshold
+    Excellent: 0.2, // 20% of points for excellent efficiency
+    Good: 0.15, // 15% of points for good efficiency
+    Average: 0.1, // 10% of points for average efficiency
+    Poor: 0.05, // 5% of points for poor efficiency
   },
   codeQualityWeights: {
-    Excellent: 0.15,
-    Good: 0.1,
-    Average: 0.05,
-    Poor: 0,
+    Excellent: 0.15, // 15% of points for excellent code quality
+    Good: 0.1, // 10% of points for good code quality
+    Average: 0.05, // 5% of points for average code quality
+    Poor: 0, // 0% of points for poor code quality
   },
-  timeThreshold: 60, // Time threshold in seconds
+  penalties: {
+    hint: 0.1, // 10% of points per hint used
+    nextLineHelp: 0.2, // 20% of points per next-line help
+    syntaxMistake: 0.2, // 20% of points per syntax mistake
+    logicMistake: 0.25, // 25% of points per logic mistake
+    timePerSecond: 0.01, // 1% of points per second after threshold
+  },
+  timeThreshold: 60, // Time threshold in seconds before penalties apply
   bonus: {
-    improvements: 0.05, // 5% of points for having improvement suggestions
+    improvements: 0.05, // 5% bonus for having improvement suggestions
   },
 };
 
