@@ -187,7 +187,6 @@ const SoloPage = () => {
     try {
       const result = await validateSolution(currentCode);
       setSolutionValidationResult(result);
-      setIsGameStarted(false);
       if (result) {
         const { totalScore } = calculateScore(
           problem?.points,

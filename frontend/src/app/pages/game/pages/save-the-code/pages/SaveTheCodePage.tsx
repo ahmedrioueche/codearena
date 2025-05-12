@@ -157,10 +157,6 @@ function SaveTheCodePage() {
     setEditorWidth(newWidth);
   };
 
-  const handleSolutionChange = (code: string) => {
-    setUserSolution(code);
-  };
-
   const handleSolutionSubmit = () => {
     // Simple validation - compare with solution code
     const isCorrect = userSolution.trim() === incident?.solutionCode.trim();

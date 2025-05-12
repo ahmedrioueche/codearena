@@ -14,6 +14,17 @@ export const modes = [
     isImplemented: true,
   },
   {
+    modeId: "save-the-code" as GameMode,
+    mode: "Save The Code",
+    description: [
+      "Explore tech's biggest software failures.",
+      "Debug critical systems in real-time.",
+      "Learn from historic coding disasters.",
+    ],
+    icon: Code,
+    isImplemented: true,
+  },
+  {
     modeId: "battle" as GameMode,
     mode: "Battle Arena",
     description: [
@@ -35,17 +46,6 @@ export const modes = [
     ],
     icon: Users,
     playerCount: 0,
-    isImplemented: false,
-  },
-  {
-    modeId: "save-the-code" as GameMode,
-    mode: "Save The Code",
-    description: [
-      "Explore tech's biggest software failures.",
-      "Debug critical systems in real-time.",
-      "Learn from historic coding disasters.",
-    ],
-    icon: Code,
     isImplemented: false,
   },
 ];
