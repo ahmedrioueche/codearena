@@ -6,7 +6,7 @@ import useScreen from "../../../../hooks/useScreen";
 import { Fullscreen, Minimize } from "lucide-react";
 
 interface CodeEditorProps {
-  gameMode: GameMode;
+  gameMode?: GameMode;
   width?: number;
   onResize?: (newWidth: number) => void;
   starterCode: string | undefined;

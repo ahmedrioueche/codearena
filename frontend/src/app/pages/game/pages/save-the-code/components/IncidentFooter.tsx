@@ -1,4 +1,12 @@
-import { useState, useRef, useEffect, Suspense, lazy } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  JSXElementConstructor,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+} from "react";
 import {
   Check,
   X,
@@ -15,97 +23,67 @@ import {
   Redo,
   Clock,
   Send,
-  FileCode2,
   Award,
-  InfoIcon,
   CheckCircle,
   AlertTriangle,
   Bug,
-  StepForward,
 } from "lucide-react";
-import {
-  GameMode,
-  Problem,
-  SolutionValidationResult,
-} from "../../../../types/game/game";
-import CodeEditor from "./CodeEditor";
-import useScreen from "../../../../hooks/useScreen";
-import { convertSeconds } from "../../../../utils/helper";
-import SolutionChat from "./SolutionChat";
-import { ActionResult } from "../../../../types/general";
-import Button from "../../../../components/ui/Button";
-import TimeProgressBar from "./ui/TimeProgressBar";
+import CodeEditor from "../../../components/CodeEditor";
+import Button from "../../../../../../components/ui/Button";
+import useScreen from "../../../../../../hooks/useScreen";
+import { IncidentI } from "../../../../../../types/game/stc";
+import { convertSeconds } from "../../../../../../utils/helper";
+import TimeProgressBar from "../../../components/ui/TimeProgressBar";
 
-const ScoreDetails = lazy(() => import("../components/ScoreDetails"));
-const ConfirmGettingSolutionModal = lazy(
-  () => import("./ui/ConfirmGettingSolutionModal")
-);
+interface SolutionValidationResult {
+  isValid: boolean;
+  correctnessPercentage: number;
+  timeComplexity?: string;
+  spaceComplexity?: string;
+  syntaxMistakesCount?: number;
+  logicMistakesCount?: number;
+  codeQuality?: string;
+  efficiencyRating?: string;
+  comments?: string;
+  useSolutionCorrection?: string;
+  correctSolution?: string;
+  bottleneckAnalysis?: string;
+  improvements?: string[];
+}
 
-const GameFooter = ({
-  problem,
-  userSolution,
-  validationResult,
-  onSolutionSubmit,
-  onGetNextLine,
-  onNewProblem,
-  onGetSolution,
-  validationError,
-  timer,
-  hintCount,
-  nextLineHelpCount,
-  score,
-}: {
-  gameMode: GameMode;
-  problem: Problem;
+interface IncidentFooterProps {
+  incident: IncidentI;
   userSolution: string;
-  validationResult: SolutionValidationResult | undefined;
+  validationResult?: SolutionValidationResult;
   onSolutionSubmit: () => void;
-  onGetNextLine: () => void;
   onNewProblem: () => void;
-  onGetSolution: () => Promise<ActionResult>;
   validationError: string | null;
   timer: number;
   hintCount: number;
-  nextLineHelpCount: number;
   score?: number;
-}) => {
+}
+
+const IncidentFooter = ({
+  incident,
+  userSolution,
+  validationResult,
+  onSolutionSubmit,
+  onNewProblem,
+  validationError,
+  timer,
+  hintCount,
+  score,
+}: IncidentFooterProps) => {
   const [showResults, setShowResults] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState<"submit" | "next_line" | "null">(
-    "null"
-  );
+  const [isLoading, setIsLoading] = useState<"submit" | "null">("null");
   const [solutionValidationResult, setSolutionValidationResult] = useState<
     SolutionValidationResult | undefined
   >();
   const { isMobile } = useScreen();
-  const [time, setTime] = useState<number>(0);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
-  const [showScoreDetails, setShowScoreDetails] = useState(false);
-  const [IsGetSolutionModalOpen, setIsGetSolutionModalOpen] = useState(false);
-  const [getSolutionResult, setGetSolutionResult] =
-    useState<ActionResult>("idle");
-  const [problemScore, setProblemScore] = useState<number | undefined>(0);
-
-  useEffect(() => {
-    setTime(timer);
-  }, [timer]);
-
-  useEffect(() => {
-    setGetSolutionResult("idle");
-  }, [problem?.id]);
-
-  useEffect(() => {
-    setProblemScore(score);
-    console.log("score", score);
-  }, [score]);
-
-  const handleSubmit = () => {
-    setElapsedTime(time);
-    setIsLoading("submit");
-    setShowResults(true);
-    onSolutionSubmit();
-  };
+  const [problemScore, setProblemScore] = useState<number | undefined>(score);
 
   useEffect(() => {
     setSolutionValidationResult(validationResult);
@@ -116,6 +94,17 @@ const GameFooter = ({
     setIsLoading("null");
   }, [validationError]);
 
+  useEffect(() => {
+    setProblemScore(score);
+  }, [score]);
+
+  const handleSubmit = () => {
+    setElapsedTime(timer);
+    setIsLoading("submit");
+    setShowResults(true);
+    onSolutionSubmit();
+  };
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen();
@@ -124,19 +113,6 @@ const GameFooter = ({
       document.exitFullscreen();
       setIsFullscreen(false);
     }
-  };
-
-  const handleGetNextLine = () => {
-    setIsLoading("next_line");
-    onGetNextLine();
-    setTimeout(() => {
-      setIsLoading("null");
-    }, 3000);
-  };
-
-  const handleGetSolution = async () => {
-    const getSolutionResult = await onGetSolution();
-    setGetSolutionResult(getSolutionResult);
   };
 
   return (
@@ -182,19 +158,13 @@ const GameFooter = ({
                 <Clock size={16} />
                 {!isMobile && "Time:"} {`${convertSeconds(elapsedTime)} `}
               </span>
-              <span className="inline-flex items-center gap-2 text-light-foreground dark:text-dark-foreground">
-                <Award size={16} />
-                {!isMobile && <span>Score:</span>}
-                <span>{`${problemScore} points ${
-                  problem?.points ? `out of ${problem?.points}` : ""
-                }`}</span>
-                <button
-                  onClick={() => setShowScoreDetails(true)}
-                  className="hover:scale-105"
-                >
-                  <InfoIcon size={16} />
-                </button>
-              </span>
+              {incident.points && (
+                <span className="inline-flex items-center gap-2 text-light-foreground dark:text-dark-foreground">
+                  <Award size={16} />
+                  {!isMobile && <span>Score:</span>}
+                  <span>{`${problemScore} points out of ${incident.points}`}</span>
+                </span>
+              )}
             </div>
 
             <div className="flex flex-col space-y-1 md:flex-row md:space-x-2 items-center">
@@ -260,7 +230,7 @@ const GameFooter = ({
               {validationResult.codeQuality !== undefined && (
                 <div className="flex items-center gap-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                   <CheckCircle size={16} className="flex-shrink-0" />
-                  <span>{`Code Quatlity: ${validationResult.codeQuality}`}</span>
+                  <span>{`Code Quality: ${validationResult.codeQuality}`}</span>
                 </div>
               )}
               {validationResult.efficiencyRating && (
@@ -278,28 +248,38 @@ const GameFooter = ({
               </div>
             )}
 
-            {!validationResult.isValid &&
-              validationResult.useSolutionCorrection && (
-                <div className="flex flex-col p-3 bg-gray-100 dark:bg-gray-800 rounded-lg h-[400px]">
-                  <span className="font-bold text-light-foreground dark:text-dark-foreground">
-                    Feedback and Correction
-                  </span>
-                  <CodeEditor
-                    gameMode="solo"
-                    starterCode={validationResult.useSolutionCorrection}
-                    isReadOnly={true}
-                  />
+            {incident.rootCause && (
+              <div className="p-3 bg-red-100 dark:bg-red-900 rounded-lg flex flex-col space-y-1">
+                <div className="flex items-start gap-2 text-light-foreground dark:text-dark-foreground">
+                  <AlertCircle size={16} className="flex-shrink-0" />
+                  <span>Root Cause:</span>
                 </div>
-              )}
+                <p className="text-light-foreground dark:text-dark-foreground">
+                  {incident.rootCause}
+                </p>
+              </div>
+            )}
 
-            {!validationResult.isValid && validationResult.correctSolution && (
+            {incident.fixExplanation && (
+              <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg flex flex-col space-y-1">
+                <div className="flex items-start gap-2 text-light-foreground dark:text-dark-foreground">
+                  <Info size={16} className="flex-shrink-0" />
+                  <span>Fix Explanation:</span>
+                </div>
+                <p className="text-light-foreground dark:text-dark-foreground">
+                  {incident.fixExplanation}
+                </p>
+              </div>
+            )}
+
+            {!validationResult.isValid && incident.solutionCode && (
               <div className="flex flex-col p-3 bg-gray-100 dark:bg-gray-800 rounded-lg h-[400px]">
                 <span className="font-bold text-light-foreground dark:text-dark-foreground">
                   Correct Solution:
                 </span>
                 <CodeEditor
                   gameMode="solo"
-                  starterCode={validationResult.correctSolution}
+                  starterCode={incident.solutionCode}
                   isReadOnly={true}
                 />
               </div>
@@ -317,28 +297,34 @@ const GameFooter = ({
               </div>
             )}
 
-            {validationResult.improvements &&
-              validationResult.improvements.length > 0 && (
-                <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex flex-col space-y-2">
-                  <div className="flex items-center gap-2 text-light-foreground dark:text-dark-foreground">
-                    <Lightbulb size={16} className="flex-shrink-0" />
-                    <span>Suggestions to Improve:</span>
-                  </div>
-                  <ul className="list-disc pl-6 text-light-foreground dark:text-dark-foreground">
-                    {validationResult.improvements.map((improvement, index) => (
-                      <li key={index}>{improvement}</li>
-                    ))}
-                  </ul>
+            {(validationResult.improvements || incident.takeaways) && (
+              <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex flex-col space-y-2">
+                <div className="flex items-center gap-2 text-light-foreground dark:text-dark-foreground">
+                  <Lightbulb size={16} className="flex-shrink-0" />
+                  <span>Key Takeaways:</span>
                 </div>
-              )}
-
-            {/* Chat Component */}
-            {problem && (
-              <SolutionChat
-                problem={problem}
-                userSolution={userSolution}
-                solutionValidation={validationResult}
-              />
+                <ul className="list-disc pl-6 text-light-foreground dark:text-dark-foreground">
+                  {validationResult.improvements?.map((improvement, index) => (
+                    <li key={`improvement-${index}`}>{improvement}</li>
+                  ))}
+                  {incident.takeaways?.map(
+                    (
+                      takeaway:
+                        | string
+                        | number
+                        | boolean
+                        | ReactElement<any, string | JSXElementConstructor<any>>
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | null
+                        | undefined,
+                      index: any
+                    ) => (
+                      <li key={`takeaway-${index}`}>{takeaway}</li>
+                    )
+                  )}
+                </ul>
+              </div>
             )}
           </div>
         </>
@@ -351,50 +337,15 @@ const GameFooter = ({
           } p-4`}
         >
           <TimeProgressBar
-            currentTime={time}
-            averageTime={problem?.averageTime!}
+            currentTime={timer}
+            averageTime={incident?.averageTime || 0}
           />
 
-          <div className="flex flex-row space-x-1 md:space-x-2">
-            <Button
-              onClick={() => setIsGetSolutionModalOpen(true)}
-              variant="primary"
-              disabled={
-                isLoading === "next_line" ||
-                isLoading === "submit" ||
-                getSolutionResult === "success"
-              }
-            >
-              <div className="flex flex-row items-center space-x-2">
-                <FileCode2 size={20} />
-                <span>Solution</span>
-              </div>
-            </Button>
-            <Button
-              onClick={handleGetNextLine}
-              variant="primary"
-              disabled={
-                getSolutionResult === "success" || isLoading == "submit"
-              }
-            >
-              {isLoading === "next_line" ? (
-                <div className="flex flex-row space-x-2">
-                  <Loader2 className="animate-spin" />
-                  <span> Help...</span>
-                </div>
-              ) : (
-                <div className="flex flex-row items-center space-x-2">
-                  <StepForward size={22} />
-                  <span>Help</span>
-                </div>
-              )}
-            </Button>
+          <div className="flex flex-row space-x-2">
             <Button
               onClick={handleSubmit}
               variant="primary"
-              disabled={
-                getSolutionResult === "success" || isLoading == "next_line"
-              }
+              disabled={isLoading === "submit"}
             >
               {isLoading === "submit" ? (
                 <div className="flex flex-row space-x-2">
@@ -411,29 +362,8 @@ const GameFooter = ({
           </div>
         </div>
       )}
-      {validationResult && (
-        <Suspense fallback={null}>
-          <ScoreDetails
-            isOpen={showScoreDetails}
-            onClose={() => setShowScoreDetails(false)}
-            problemPoints={problem?.points}
-            result={validationResult}
-            hintsCount={hintCount}
-            nextLineHelpCount={nextLineHelpCount}
-            timer={time}
-          />
-        </Suspense>
-      )}
-      <Suspense>
-        <ConfirmGettingSolutionModal
-          isOpen={IsGetSolutionModalOpen}
-          onClose={() => setIsGetSolutionModalOpen(false)}
-          onConfirm={handleGetSolution}
-          operationResult={getSolutionResult}
-        />
-      </Suspense>
     </div>
   );
 };
 
-export default GameFooter;
+export default IncidentFooter;

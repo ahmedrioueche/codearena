@@ -196,6 +196,7 @@ const SoloPage = () => {
           nextLineHelpCount,
           timer
         );
+        console.log("totalScore", totalScore);
         setProblemScore(totalScore);
         await updateUserScore();
       }
