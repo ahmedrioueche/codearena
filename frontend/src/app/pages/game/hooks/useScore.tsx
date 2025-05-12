@@ -3,15 +3,35 @@ import {
   ScoreBreakdown,
   SolutionValidationResult,
 } from "../../../../types/game/game";
+
 export const useScore = () => {
   const calculateScore = (
     problemPoints: number | undefined,
     result: SolutionValidationResult,
     hintsCount: number,
     nextLineHelpCount: number,
-    timer: number
+    timer: number,
+    problemTime: number // in minutes
   ): ScoreBreakdown => {
     const points = problemPoints || SCORE_VALUES.defaultPoints;
+    const problemTimeInSeconds = problemTime * 60;
+    const isTimeOver = timer >= problemTimeInSeconds;
+
+    // If time is over, return 0 score with time over flag
+    if (isTimeOver) {
+      return {
+        correctnessScore: 0,
+        efficiencyScore: 0,
+        codeQualityScore: 0,
+        hintsPenalty: 0,
+        nextLineHelpPenalty: 0,
+        timePenalty: 0,
+        syntaxMistakesPenalty: 0,
+        logicMistakesPenalty: 0,
+        totalScore: 0,
+        isTimeOver: true,
+      };
+    }
 
     // Calculate all score components
     const correctnessScore =
@@ -67,6 +87,7 @@ export const useScore = () => {
       syntaxMistakesPenalty: round(syntaxMistakesPenalty),
       logicMistakesPenalty: round(logicMistakesPenalty),
       totalScore: round(totalScore),
+      isTimeOver: false,
     };
   };
 

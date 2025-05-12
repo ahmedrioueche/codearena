@@ -49,6 +49,7 @@ const GameFooter = ({
   onGetNextLine,
   onNewProblem,
   onGetSolution,
+  onTimeOver,
   validationError,
   timer,
   hintCount,
@@ -63,6 +64,7 @@ const GameFooter = ({
   onGetNextLine: () => void;
   onNewProblem: () => void;
   onGetSolution: () => Promise<ActionResult>;
+  onTimeOver: () => void;
   validationError: string | null;
   timer: number;
   hintCount: number;
@@ -89,6 +91,11 @@ const GameFooter = ({
 
   useEffect(() => {
     setTime(timer);
+    if (problem?.averageTime) {
+      if (timer >= problem?.averageTime * 60) {
+        onTimeOver();
+      }
+    }
   }, [timer]);
 
   useEffect(() => {
@@ -416,7 +423,7 @@ const GameFooter = ({
           <ScoreDetails
             isOpen={showScoreDetails}
             onClose={() => setShowScoreDetails(false)}
-            problemPoints={problem?.points}
+            problem={problem}
             result={validationResult}
             hintsCount={hintCount}
             nextLineHelpCount={nextLineHelpCount}
