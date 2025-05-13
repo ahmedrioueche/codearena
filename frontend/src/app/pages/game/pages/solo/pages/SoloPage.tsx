@@ -172,7 +172,9 @@ const SoloPage = () => {
 
     try {
       const hint = await getHint(problem, currentCode, hints);
-      setHints((prevHints) => [...prevHints, hint!]);
+      const cleanedHint = hint?.replace(/"/g, ""); // Removes all double quotes
+
+      setHints((prevHints) => [...prevHints, cleanedHint!]);
     } catch (error) {
       console.error("Error fetching hint:", error);
       setHints((prevHints) => [
