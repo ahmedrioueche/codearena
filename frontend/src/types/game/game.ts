@@ -125,7 +125,6 @@ export interface ScoreBreakdown {
   codeQualityScore: number;
   hintsPenalty: number;
   nextLineHelpPenalty: number;
-  timePenalty: number;
   syntaxMistakesPenalty: number;
   logicMistakesPenalty: number;
   totalScore: number;
