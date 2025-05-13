@@ -101,11 +101,6 @@ const Help = ({ isCollapsed, onToggleCollapse }: HelpProps) => {
                         • Next Line Help: -
                         {SCORE_VALUES.penalties.nextLineHelp * 100}% each
                       </p>
-                      <p>
-                        • Time Penalty: -
-                        {SCORE_VALUES.penalties.timePerSecond * 100}% per second
-                        after {SCORE_VALUES.timeThreshold}s
-                      </p>
                     </div>
                   </div>
                 </div>
