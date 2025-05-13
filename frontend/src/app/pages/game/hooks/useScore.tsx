@@ -25,7 +25,6 @@ export const useScore = () => {
         codeQualityScore: 0,
         hintsPenalty: 0,
         nextLineHelpPenalty: 0,
-        timePenalty: 0,
         syntaxMistakesPenalty: 0,
         logicMistakesPenalty: 0,
         totalScore: 0,
@@ -48,9 +47,7 @@ export const useScore = () => {
     const hintsPenalty = hintsCount * (SCORE_VALUES.penalties.hint * points);
     const nextLineHelpPenalty =
       nextLineHelpCount * (SCORE_VALUES.penalties.nextLineHelp * points);
-    const timePenalty =
-      Math.max(timer - SCORE_VALUES.timeThreshold, 0) *
-      (SCORE_VALUES.penalties.timePerSecond * points);
+
     const syntaxMistakesPenalty =
       result.syntaxMistakesCount *
       (SCORE_VALUES.penalties.syntaxMistake * points);
@@ -66,7 +63,6 @@ export const useScore = () => {
           codeQualityScore -
           hintsPenalty -
           nextLineHelpPenalty -
-          timePenalty -
           syntaxMistakesPenalty -
           logicMistakesPenalty,
         0
@@ -83,7 +79,6 @@ export const useScore = () => {
       codeQualityScore: round(codeQualityScore),
       hintsPenalty: round(hintsPenalty),
       nextLineHelpPenalty: round(nextLineHelpPenalty),
-      timePenalty: round(timePenalty),
       syntaxMistakesPenalty: round(syntaxMistakesPenalty),
       logicMistakesPenalty: round(logicMistakesPenalty),
       totalScore: round(totalScore),
