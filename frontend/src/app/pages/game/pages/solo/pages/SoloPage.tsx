@@ -39,6 +39,9 @@ const ProblemModal = lazy(() => import("../../../components/ProblemModal"));
 const LeaveConfirmationModal = lazy(
   () => import("../../../components/ui/LeaveConfirmationModal")
 );
+const GetProblemConfirmationModal = lazy(
+  () => import("../components/GetProblemConfirmationModal")
+);
 const ShowTimeOverModal = lazy(() => import("../components/ShowTimeOverModal"));
 
 const Settings = lazy(() => import("../../../components/Settings"));
@@ -78,6 +81,8 @@ const SoloPage = () => {
   const [currentCode, setCurrentCode] = useState("");
   const hasFetched = useRef(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [showNewProblemConfirmation, setShowNewProblemConfirmation] =
+    useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(false);
   const [isProblemModalOpen, setIsProblemModalOpen] = useState(false);
   const [isNewProblem, setIsisNewProblem] = useState(false);
@@ -360,7 +365,7 @@ const SoloPage = () => {
         <Problem
           gameMode="solo"
           problem={problem!}
-          onGetNewProblem={handleGetNewProblem}
+          onGetNewProblem={() => setShowNewProblemConfirmation(true)}
           hints={hints}
           isHintLoading={loadingHint}
           onGetHint={handleGetHint}
@@ -598,7 +603,7 @@ const SoloPage = () => {
               isGameStarted={isGameStarted}
               isOpenOnMobile={isControlsOpenOnMobile}
               onTimerChange={handleTimerChange}
-              onGetNewProblem={handleGetNewProblem}
+              onGetNewProblem={() => setShowNewProblemConfirmation(true)}
               onToggleComponent={(component: string) =>
                 handleToggleComponent(component as keyof typeof collapsedStates)
               }
@@ -627,7 +632,18 @@ const SoloPage = () => {
         />
       </div>
 
-      {/* Leave Confirmation Modal */}
+      <Suspense fallback={null}>
+        <ProblemModal
+          isOpen={isProblemModalOpen}
+          onClose={() => setIsProblemModalOpen(false)}
+          problem={problem!}
+          onGetNewProblem={() => setShowNewProblemConfirmation(true)}
+          hints={hints}
+          isHintLoading={loadingHint}
+          onGetHint={handleGetHint}
+        />
+      </Suspense>
+
       <Suspense fallback={null}>
         <LeaveConfirmationModal
           isOpen={showLeaveModal}
@@ -636,18 +652,17 @@ const SoloPage = () => {
         />
       </Suspense>
 
-      {/* Problem Modal */}
       <Suspense fallback={null}>
-        <ProblemModal
-          isOpen={isProblemModalOpen}
-          onClose={() => setIsProblemModalOpen(false)}
-          problem={problem!}
-          onGetNewProblem={handleGetNewProblem}
-          hints={hints}
-          isHintLoading={loadingHint}
-          onGetHint={handleGetHint}
+        <GetProblemConfirmationModal
+          isOpen={showNewProblemConfirmation}
+          onClose={() => setShowNewProblemConfirmation(false)}
+          onConfirm={() => {
+            handleGetNewProblem();
+            setShowNewProblemConfirmation(false);
+          }}
         />
       </Suspense>
+
       <Suspense fallback={null}>
         <ShowTimeOverModal
           isOpen={showTimeOver}
