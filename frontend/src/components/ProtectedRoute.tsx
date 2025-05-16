@@ -12,7 +12,7 @@ type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
-  const { pathname, search } = useLocation();
+  const { search } = useLocation();
   const navigate = useNavigate();
   const { setCurrentUser } = useAppContext();
   const { saveConfig } = useMatchConfig();
@@ -21,12 +21,13 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
   >("loading");
 
   useEffect(() => {
-    const extractAndSaveConfig = (): GameMode | null => {
-      const params = new URLSearchParams(search);
-      const gameMode = params.get("gameMode") as GameMode | null;
+    const params = new URLSearchParams(search);
+    const gameMode = params.get("gameMode");
 
-      const urlConfig: Partial<MatchConfigI> = {
-        ...(gameMode && { gameMode }),
+    // Save all config parameters to localStorage
+    if (params.size > 0) {
+      const config: Partial<MatchConfigI> = {
+        ...(gameMode && { gameMode: gameMode as GameMode }),
         ...(params.has("language") && { language: params.get("language")! }),
         ...(params.has("difficultyLevel") && {
           difficultyLevel: params.get("difficultyLevel")! as DifficultyLevel,
@@ -36,17 +37,10 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
           topics: params.get("topics")!.split(","),
         }),
       };
-
-      if (Object.keys(urlConfig).length > 0) {
-        saveConfig(urlConfig);
-      }
-
-      return gameMode;
-    };
+      saveConfig(config);
+    }
 
     const checkAuth = async () => {
-      const gameMode = extractAndSaveConfig();
-
       try {
         const user = await getUser();
         setCurrentUser(user);
@@ -58,11 +52,10 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
 
         setAuthStatus("authenticated");
 
+        // If gameMode exists, redirect directly to game page
         if (gameMode) {
-          navigate({
-            to: `/game/${gameMode}`,
-            search: Object.fromEntries(new URLSearchParams(search)),
-          });
+          navigate({ to: `/game/${gameMode}` });
+          return;
         }
       } catch (error: any) {
         if (error.response?.status === 401) {
@@ -73,10 +66,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
             setAuthStatus("authenticated");
 
             if (gameMode) {
-              navigate({
-                to: `/game/${gameMode}`,
-                search: Object.fromEntries(new URLSearchParams(search)),
-              });
+              navigate({ to: `/game/${gameMode}` });
             }
           } catch {
             setAuthStatus("unauthenticated");
@@ -88,19 +78,15 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     };
 
     checkAuth();
-  }, [setCurrentUser, search, saveConfig, navigate]);
+  }, [search, navigate, setCurrentUser, saveConfig]);
 
   if (authStatus === "unauthenticated") {
     const params = new URLSearchParams(search);
     const gameMode = params.get("gameMode");
-    const redirectPath = gameMode ? `/game/${gameMode}` : pathname;
 
-    // Use navigate instead of window.location for SPA navigation
-    return (
-      <Navigate
-        to={`/auth/login?redirect=${encodeURIComponent(redirectPath)}`}
-      />
-    );
+    // SIMPLE REDIRECT LOGIC - JUST GAME MODE PATH
+    const redirectPath = gameMode ? `/game/${gameMode}` : "/";
+    return <Navigate to={`/auth/login?redirect=${redirectPath}`} />;
   }
 
   if (authStatus === "unverified") {
