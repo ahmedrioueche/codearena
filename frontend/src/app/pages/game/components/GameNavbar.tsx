@@ -63,7 +63,7 @@ const GameNavbar = ({}: GameNavbarProps) => {
   const handleLogout = async () => {
     try {
       await logout();
-      location.href = APP_PAGES.login.route;
+      window.location.href = APP_PAGES.login.route;
     } catch (e) {
       console.log(e);
       toast.error(`Logout failed, please try again`);
