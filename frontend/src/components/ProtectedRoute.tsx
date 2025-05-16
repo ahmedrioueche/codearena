@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { getUser } from "../api/user";
 import { useAppContext } from "../context/AppContext";
@@ -12,7 +12,6 @@ type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { setCurrentUser } = useAppContext();
   const { saveConfig } = useMatchConfig();
@@ -21,25 +20,36 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     "loading" | "authenticated" | "unauthenticated" | "unverified"
   >("loading");
 
+  // This is a critical function - define it outside useEffect to avoid closure issues
+  const handleRedirect = (destination: "login" | "verify-email") => {
+    // Use the browser's raw URL rather than the router's location object
+    // This avoids any potential object serialization issues
+    const rawUrl = window.location.pathname + window.location.search;
+
+    // Create the redirect URL based on the destination
+    const redirectUrl =
+      destination === "login"
+        ? `/auth/login?redirect=${encodeURIComponent(rawUrl)}`
+        : `/auth/verify-email?redirect=${encodeURIComponent(rawUrl)}`;
+
+    // Use replace to avoid browser history issues
+    window.location.replace(redirectUrl);
+  };
+
   // Handle redirects based on auth status
   useEffect(() => {
     if (authStatus === "unauthenticated") {
-      const redirectPath = `${location.pathname}${location.search}`;
-      window.location.href = `/auth/login?redirect=${encodeURIComponent(
-        redirectPath
-      )}`;
+      handleRedirect("login");
     } else if (authStatus === "unverified") {
-      const redirectPath = `${location.pathname}${location.search}`;
-      window.location.href = `/auth/verify-email?redirect=${encodeURIComponent(
-        redirectPath
-      )}`;
+      handleRedirect("verify-email");
     }
-  }, [authStatus, location.pathname, location.search]);
+  }, [authStatus]);
 
-  // Check authentication status
+  // Check authentication on component mount
   useEffect(() => {
     const extractAndSaveConfig = (): string | null => {
-      const params = new URLSearchParams(location.search);
+      // Use URLSearchParams with the raw search string to ensure correct parsing
+      const params = new URLSearchParams(window.location.search);
       const gameMode = params.get("gameMode") as GameMode | null;
 
       const urlConfig: Partial<MatchConfigI> = {
@@ -101,18 +111,8 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
       }
     };
 
-    // Only check auth if we're still in loading state
-    if (authStatus === "loading") {
-      checkAuth();
-    }
-  }, [
-    setCurrentUser,
-    location.search,
-    saveConfig,
-    navigate,
-    location.pathname,
-    authStatus,
-  ]);
+    checkAuth();
+  }, [setCurrentUser, saveConfig, navigate]);
 
   // Return loading screen for any non-authenticated state
   if (authStatus !== "authenticated") {
