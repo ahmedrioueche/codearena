@@ -10,14 +10,18 @@ import { DifficultyLevel, GameMode, MatchConfigI } from "../types/game/game";
 type ProtectedRouteProps = {
   children: ReactNode;
 };
+
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { setCurrentUser } = useAppContext();
   const { saveConfig } = useMatchConfig();
+
   const [authStatus, setAuthStatus] = useState<
     "loading" | "authenticated" | "unauthenticated" | "unverified"
   >("loading");
+
+  const originalPath = pathname + search;
 
   useEffect(() => {
     const extractAndSaveConfig = (): string | null => {
@@ -25,7 +29,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
       const gameMode = params.get("gameMode") as GameMode | null;
 
       const urlConfig: Partial<MatchConfigI> = {
-        ...(gameMode && { gameMode }),
+        ...(gameMode ? { gameMode } : {}),
         ...(params.has("language") && { language: params.get("language")! }),
         ...(params.has("difficultyLevel") && {
           difficultyLevel: params.get("difficultyLevel")! as DifficultyLevel,
@@ -46,7 +50,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     };
 
     const checkAuth = async () => {
-      const gameMode = extractAndSaveConfig(); // extract BEFORE user checks
+      const gameMode = extractAndSaveConfig();
 
       try {
         const user = await getUser();
@@ -61,7 +65,6 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
 
         if (gameMode) {
           navigate({ to: `/game/${gameMode}` });
-          return;
         }
       } catch (error: any) {
         if (error.response?.status === 401) {
@@ -73,7 +76,6 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
 
             if (gameMode) {
               navigate({ to: `/game/${gameMode}` });
-              return;
             }
           } catch {
             setAuthStatus("unauthenticated");
@@ -85,30 +87,24 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     };
 
     checkAuth();
-  }, [setCurrentUser, search, saveConfig, navigate]);
+  }, [setCurrentUser, search, saveConfig, navigate, pathname]);
 
   if (authStatus === "loading") {
     return <LoadingScreen />;
   }
 
   if (authStatus === "unauthenticated") {
-    const params = new URLSearchParams(search);
-    const gameMode = params.get("gameMode");
-    const redirectPath = gameMode ? `/game/${gameMode}` : pathname;
     return (
       <Navigate
-        to={`/auth/login?redirect=${encodeURIComponent(redirectPath)}`}
+        to={`/auth/login?redirect=${encodeURIComponent(originalPath)}`}
       />
     );
   }
 
   if (authStatus === "unverified") {
-    const params = new URLSearchParams(search);
-    const gameMode = params.get("gameMode");
-    const redirectPath = gameMode ? `/game/${gameMode}` : pathname;
     return (
       <Navigate
-        to={`/auth/verify-email?redirect=${encodeURIComponent(redirectPath)}`}
+        to={`/auth/verify-email?redirect=${encodeURIComponent(originalPath)}`}
       />
     );
   }
