@@ -22,10 +22,20 @@ export const CONFIG_MODES = {
 } as const;
 
 export interface Player {
-  id: number;
+  id: string;
   name: string;
   rating: number;
   skillLevel: "beginner" | "junior" | "intermediate" | "senior";
+  avatar: string;
+  status: "ready" | "not-ready";
+  isCurrentUser: boolean;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  players: Player[];
+  color: string;
 }
 
 export interface Topic {
@@ -41,7 +51,8 @@ export interface ProgrammingLanguageI {
 
 export type ProgrammingLanguageT = (typeof languages)[number]["id"];
 
-export interface MatchConfigInterface {
+export interface MatchConfigI {
+  gameMode?: GameMode;
   language: string;
   topics: string[];
   difficultyLevel: DifficultyLevel;

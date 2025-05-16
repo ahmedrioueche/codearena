@@ -5,10 +5,10 @@ import morgan from 'morgan';
 import { errorHandler, notFoundHandler } from './middlewares/error';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
+import roomRoutes from './routes/room';
 import { API_BASE_URL } from './constants/api';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-
 dotenv.config();
 
 class App {
@@ -24,34 +24,19 @@ class App {
   private setMiddlewares(): void {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-
-    // Enhanced CORS configuration
-    // In your App.ts middleware setup
     this.app.use(
       cors({
         origin: process.env.ORIGIN || 'https://codearena-delta.vercel.app',
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-        exposedHeaders: ['set-cookie'], // Add this line
+        exposedHeaders: ['set-cookie'],
       }),
     );
 
     this.app.use(cookieParser());
     this.app.use(helmet());
     this.app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-  }
-
-  private getCorsOrigins(): string[] {
-    const ORIGIN = process.env.ORIGIN;
-    console.log({ ORIGIN });
-
-    const origins = process.env.ORIGIN ? process.env.ORIGIN.split(',') : ['http://localhost:5173'];
-
-    if (process.env.NODE_ENV !== 'production') {
-      origins.push('http://localhost:5173');
-    }
-    return origins;
   }
 
   private setRoutes(): void {
@@ -71,6 +56,7 @@ class App {
     // API routes
     this.app.use(`${API_BASE_URL}/auth`, authRoutes);
     this.app.use(`${API_BASE_URL}/user`, userRoutes);
+    this.app.use(`${API_BASE_URL}/room`, roomRoutes);
   }
 
   private setErrorHandlers(): void {

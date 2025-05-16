@@ -1,3 +1,4 @@
+import { useLocation } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { login } from "../../../../../../api/auth";
@@ -10,6 +11,7 @@ interface LoginProps {
 }
 
 const Login = ({ onForgotPassword, onSuccess }: LoginProps) => {
+  const { search } = useLocation();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -77,6 +79,11 @@ const Login = ({ onForgotPassword, onSuccess }: LoginProps) => {
     if (error) setError("");
   };
 
+  // Get signup URL with preserved query parameters
+  const getSignupUrl = () => {
+    return `/auth/signup${search}`;
+  };
+
   return (
     <div className="bg-black/40 backdrop-blur-xl p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl max-w-md w-full">
       {/* Logo */}
@@ -138,7 +145,7 @@ const Login = ({ onForgotPassword, onSuccess }: LoginProps) => {
         </button>
         <span className="mx-3 text-white/30">•</span>
         <a
-          href="/auth/signup"
+          href={getSignupUrl()}
           className="text-blue-300 hover:text-blue-400 transition-colors"
         >
           Sign Up

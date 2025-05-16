@@ -34,6 +34,10 @@ const userSchema = new Schema<IUserDocument>(
       type: Boolean,
       required: false,
     },
+    isAdmin: {
+      type: Boolean,
+      required: false,
+    },
     age: {
       type: Number,
       required: false,

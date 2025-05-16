@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { logout } from "../../../../api/auth";
 import { APP_PAGES } from "../../../../constants/navigation";
 import toast from "react-hot-toast";
+import { useLocation } from "@tanstack/react-router";
 
 interface GameNavbarProps {
   gameMode: GameMode;
@@ -32,6 +33,8 @@ const GameNavbar = ({}: GameNavbarProps) => {
     (state: RootState) => state.problemControl.isControlsToggled
   );
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const isSoloMode = location.href === "/game/solo";
 
   settingsActions.setTheme("dark");
 
@@ -133,26 +136,30 @@ const GameNavbar = ({}: GameNavbarProps) => {
           {isMobile && (
             <div className="flex items-center space-x-4">
               {/* Toggle Problem Button */}
-              <button
-                onClick={() => {
-                  handleToggleProblem();
-                }}
-                className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
-                title="Problem"
-              >
-                <BookOpen className="w-6 h-6" />
-              </button>
+              {isSoloMode && (
+                <>
+                  <button
+                    onClick={() => {
+                      handleToggleProblem();
+                    }}
+                    className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                    title="Problem"
+                  >
+                    <BookOpen className="w-6 h-6" />
+                  </button>
 
-              {/* Toggle Controls Button */}
-              <button
-                onClick={() => {
-                  handleToggleControlsMenu();
-                }}
-                className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
-                title="Controls"
-              >
-                <Sliders className="w-6 h-6" />
-              </button>
+                  {/* Toggle Controls Button */}
+                  <button
+                    onClick={() => {
+                      handleToggleControlsMenu();
+                    }}
+                    className="text-light-primary dark:text-dark-primary hover:scale-110 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200"
+                    title="Controls"
+                  >
+                    <Sliders className="w-6 h-6" />
+                  </button>
+                </>
+              )}
 
               {/* Mobile Menu Button */}
               <div className="relative">

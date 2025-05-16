@@ -4,7 +4,7 @@ import RadioGroup from "../../../../../../../components/ui/RadioGroup";
 import {
   DifficultyLevel,
   GameMode,
-  MatchConfigInterface,
+  MatchConfigI,
 } from "../../../../../../../types/game/game";
 import {
   difficultyLevels,
@@ -15,13 +15,15 @@ import {
 import { useMatchConfig } from "../../../../../../hooks/useMatchConfig";
 
 function MatchConfig({
+  gameMode,
   isGameStarted,
 }: {
   gameMode: GameMode;
   isGameStarted?: boolean;
 }) {
   const { matchConfig } = useMatchConfig();
-  const [newMatchConfig, setNewMatchConfig] = useState<MatchConfigInterface>({
+  const [newMatchConfig, setNewMatchConfig] = useState<MatchConfigI>({
+    gameMode: gameMode,
     language: matchConfig?.language || "javascript",
     topics: matchConfig?.topics || topics.filter((t) => t.id === "algorithms"),
     difficultyLevel: matchConfig?.difficultyLevel || "medium",
@@ -35,6 +37,7 @@ function MatchConfig({
 
   useEffect(() => {
     saveConfig({
+      gameMode: newMatchConfig.gameMode,
       language: newMatchConfig.language,
       topics: newMatchConfig.topics,
       difficultyLevel: selectedDifficulty,

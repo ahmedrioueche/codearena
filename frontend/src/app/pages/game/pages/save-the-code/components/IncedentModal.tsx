@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  AlertTriangle,
-  FileText,
-  Clock,
-  FileInput,
-  FileSearch,
-  FileOutput,
-  Lightbulb,
-  Bug,
-  Shield,
-} from "lucide-react";
+import { AlertTriangle, FileText, Clock, Shield } from "lucide-react";
 import BaseModal from "../../../../../../components/ui/BaseModal";
 import { IncidentI } from "../../../../../../types/game/stc";
 
@@ -28,10 +18,12 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
 }) => {
   const renderFileContent = (file: {
     name: string;
-    type: "image" | "text" | "json" | "log";
+    type?: "image" | "text" | "json" | "log";
     content: string;
   }) => {
-    switch (file.type) {
+    const fileType = file.type || "text"; // Default to "text" if type is undefined
+
+    switch (fileType) {
       case "image":
         return (
           <img
@@ -41,11 +33,19 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
           />
         );
       case "json":
-        return (
-          <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto text-black dark:text-white">
-            {JSON.stringify(JSON.parse(file.content), null, 2)}
-          </pre>
-        );
+        try {
+          return (
+            <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto text-black dark:text-white">
+              {JSON.stringify(JSON.parse(file.content), null, 2)}
+            </pre>
+          );
+        } catch {
+          return (
+            <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto text-black dark:text-white">
+              {file.content}
+            </pre>
+          );
+        }
       case "log":
         return (
           <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto text-black dark:text-white">
@@ -69,7 +69,7 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
       width="90vw"
       height="90vh"
     >
-      <div className="space-y-6 overflow-y-auto max-h-[calc(90vh-150px)]">
+      <div className="space-y-6 overflow-y-auto ">
         <div className="flex gap-4 flex-wrap">
           {incident.actuallyHappened && (
             <div className="flex items-center gap-1 text-orange-500">
@@ -97,7 +97,6 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
 
         <div>
           <h2 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
-            <FileInput size={20} />
             Introduction
           </h2>
           <p className="text-black dark:text-white">{incident.intro}</p>
@@ -105,7 +104,6 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
 
         <div>
           <h2 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
-            <FileSearch size={20} />
             Incident Details
           </h2>
           <p className="text-black dark:text-white">{incident.body}</p>
@@ -114,7 +112,6 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
         {incident.symptoms && incident.symptoms.length > 0 && (
           <div>
             <h2 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
-              <AlertTriangle size={20} />
               Symptoms
             </h2>
             <ul className="list-disc pl-6 text-black dark:text-white">
@@ -146,7 +143,6 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
         {incident.logs && incident.logs.length > 0 && (
           <div>
             <h2 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
-              <FileOutput size={20} />
               Logs
             </h2>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
@@ -178,14 +174,13 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
           </div>
         )}
 
-        {/*
-{incident.files && incident.files.length > 0 && (
+        {incident.files && incident.files.length > 0 && (
           <div>
             <h2 className="text-xl font-bold mb-3 text-black dark:text-white">
               Related Files
             </h2>
             <div className="grid gap-4">
-              {incident.files.map((file: { name: any; type?: "image" | "text" | "json" | "log"; content?: string; }, index: React.Key | null | undefined) => (
+              {incident.files.map((file, index) => (
                 <div
                   key={index}
                   className="bg-white dark:bg-gray-800 rounded-lg p-4 text-black dark:text-white"
@@ -197,11 +192,8 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
             </div>
           </div>
         )}
- */}
-
         <div>
           <h2 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
-            <Bug size={20} />
             Problematic Code
           </h2>
           <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-auto text-black dark:text-white">
@@ -219,7 +211,6 @@ const IncidentModal: React.FC<IncidentModalProps> = ({
         {hints.length > 0 && (
           <div>
             <h2 className="text-xl font-bold mb-3 text-black dark:text-white flex items-center gap-2">
-              <Lightbulb size={20} />
               Hints
             </h2>
             {hints.map((hint, index) => (

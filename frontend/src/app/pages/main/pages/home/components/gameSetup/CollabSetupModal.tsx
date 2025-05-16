@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Users } from "lucide-react";
 import Button from "../../../../../../../components/ui/Button";
 import QuickMatch from "./QuickMatch";
 import JoinRoom from "./JoinRoom";
-import CreateRoom from "./CreateRoom";
 import ConfigModeSelector from "./ConfigModeSelector";
 import { CONFIG_MODES, ConfigMode } from "../../../../../../../types/game/game";
+import { RoomApi } from "../../../../../../../api/game/room";
+import { useAppContext } from "../../../../../../../context/AppContext";
+import toast from "react-hot-toast";
+import { router } from "../../../../../../../routers";
+import { APP_PAGES } from "../../../../../../../constants/navigation";
 
 const CollabModeSetupModal: React.FC<{
   isOpen: boolean;
@@ -13,18 +17,64 @@ const CollabModeSetupModal: React.FC<{
 }> = ({ isOpen, onClose }) => {
   const [configMode, setConfigMode] = useState<ConfigMode>(CONFIG_MODES.SEARCH);
   const [isSeachStarted, setIsSeachStarted] = useState(false);
+  const { currentUser, setCurrentRoom } = useAppContext();
+  const [roomCode, setRoomCode] = useState("");
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    if (isOpen) {
+      setConfigMode(CONFIG_MODES.SEARCH);
+      setIsSeachStarted(false);
+    }
+  }, [isOpen]);
+
+  const handleSubmit = async () => {
     if (configMode === CONFIG_MODES.SEARCH) {
       setIsSeachStarted(true);
+    }
+    if (configMode === CONFIG_MODES.CREATE) {
+      try {
+        const res = await RoomApi.createRoom(currentUser.username);
+        if (res) setCurrentRoom(res.room);
+        toast.success(`Room created`);
+        router.navigate({ to: APP_PAGES.game.room.route });
+      } catch (e) {
+        console.log("error", e);
+        toast.error(`Error creating room`);
+      }
+    }
+    if (configMode === CONFIG_MODES.JOIN) {
+      try {
+        const res = await RoomApi.joinRoom(currentUser.username, roomCode);
+        if (res) setCurrentRoom(res.room);
+        toast.success(`Joined room with code ${roomCode}`);
+        router.navigate({ to: APP_PAGES.game.room.route });
+      } catch (e) {
+        console.log("error", e);
+        toast.error(`Error joining room`);
+      }
+    }
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-4xl max-h-[95vh] bg-light-background dark:bg-dark-background rounded-2xl shadow-xl">
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick}
+    >
+      <div
+        className="relative w-full max-w-4xl max-h-[95vh] bg-light-background dark:bg-dark-background rounded-2xl shadow-xl"
+        style={{
+          background:
+            "linear-gradient(135deg, #001122 0%, #001A2F 50%, #00253D 100%)",
+        }}
+      >
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -46,15 +96,18 @@ const CollabModeSetupModal: React.FC<{
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
           <ConfigModeSelector
-            gameMode="battle"
+            gameMode="collab"
             onSelectConfigMode={(configMode) => setConfigMode(configMode)}
           />
           {configMode === CONFIG_MODES.JOIN ? (
-            <JoinRoom gameMode={"battle"} />
+            <JoinRoom
+              gameMode={"collab"}
+              onChange={(roomSettings) => setRoomCode(roomSettings.roomCode)}
+            />
           ) : configMode === CONFIG_MODES.CREATE ? (
-            <CreateRoom gameMode="battle" />
+            <></>
           ) : (
-            <QuickMatch gameMode="battle" isSearchStarted={isSeachStarted} />
+            <QuickMatch gameMode="collab" isSearchStarted={isSeachStarted} />
           )}
         </div>
 

@@ -4,12 +4,14 @@ import { sendOtp, signup } from "../../../../../../api/auth";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import InputField from "../../../../../../components/ui/InputField";
+import { useLocation } from "@tanstack/react-router";
 
 interface SignupProps {
   onSuccess: (data: UserCreate) => void;
 }
 
 const Signup = ({ onSuccess }: SignupProps) => {
+  const { search } = useLocation();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -119,6 +121,10 @@ const Signup = ({ onSuccess }: SignupProps) => {
     }
   };
 
+  const getLoginUrl = () => {
+    return `/auth/signup${search}`;
+  };
+
   return (
     <div className="bg-black/40 backdrop-blur-xl p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl max-w-md w-full">
       {/* Logo */}
@@ -193,7 +199,7 @@ const Signup = ({ onSuccess }: SignupProps) => {
       <div className="mt-8 text-center text-sm">
         <span className="text-white/60">Already have an account?</span>
         <a
-          href="/auth/login"
+          href={getLoginUrl()}
           className="ml-2 text-blue-300 hover:text-blue-400 transition-colors"
         >
           Log In

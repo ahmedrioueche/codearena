@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Share2, Copy, Check } from "lucide-react";
 
-const RoomOptions = ({ roomId = "123-456-789" }) => {
+const RoomOptions = ({ roomCode }: { roomCode: string }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyRoomId = async () => {
     try {
-      await navigator.clipboard.writeText(roomId);
+      await navigator.clipboard.writeText(roomCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -32,7 +32,7 @@ const RoomOptions = ({ roomId = "123-456-789" }) => {
       <div className="p-4 bg-white dark:bg-dark-background border border-light-border dark:border-dark-border rounded-lg shadow-sm">
         <div className="flex flex-col space-y-6 items-center">
           <span className="text-xl font-mono text-light-foreground dark:text-dark-foreground break-all">
-            {roomId}
+            {roomCode}
           </span>
           <button
             onClick={handleCopyRoomId}

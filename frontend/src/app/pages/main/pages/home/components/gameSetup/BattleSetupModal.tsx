@@ -3,7 +3,6 @@ import { X, Swords } from "lucide-react";
 import Button from "../../../../../../../components/ui/Button";
 import QuickMatch from "./QuickMatch";
 import JoinRoom from "./JoinRoom";
-import CreateRoom from "./CreateRoom";
 import ConfigModeSelector from "./ConfigModeSelector";
 import { CONFIG_MODES, ConfigMode } from "../../../../../../../types/game/game";
 
@@ -13,6 +12,7 @@ const BattleModeSetupModal: React.FC<{
 }> = ({ isOpen, onClose }) => {
   const [configMode, setConfigMode] = useState<ConfigMode>(CONFIG_MODES.SEARCH);
   const [isSeachStarted, setIsSeachStarted] = useState(false);
+  const [roomCode, setRoomCode] = useState("");
 
   const handleSubmit = () => {
     if (configMode === CONFIG_MODES.SEARCH) {
@@ -50,9 +50,12 @@ const BattleModeSetupModal: React.FC<{
             onSelectConfigMode={(configMode) => setConfigMode(configMode)}
           />
           {configMode === CONFIG_MODES.JOIN ? (
-            <JoinRoom gameMode={"battle"} />
+            <JoinRoom
+              gameMode={"battle"}
+              onChange={(roomSettings) => setRoomCode(roomSettings.roomCode)}
+            />
           ) : configMode === CONFIG_MODES.CREATE ? (
-            <CreateRoom gameMode="battle" />
+            <></>
           ) : (
             <QuickMatch gameMode="battle" isSearchStarted={isSeachStarted} />
           )}
