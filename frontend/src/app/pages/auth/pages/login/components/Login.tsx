@@ -81,7 +81,14 @@ const Login = ({ onForgotPassword, onSuccess }: LoginProps) => {
 
   // Get signup URL with preserved query parameters
   const getSignupUrl = () => {
-    return `/auth/signup${search}`;
+    const queryParams = new URLSearchParams(
+      Object.entries(search).reduce((acc, [key, value]) => {
+        acc[key] = String(value);
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
+
+    return `/auth/signup${queryParams ? `?${queryParams}` : ""}`;
   };
 
   return (

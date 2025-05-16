@@ -122,7 +122,14 @@ const Signup = ({ onSuccess }: SignupProps) => {
   };
 
   const getLoginUrl = () => {
-    return `/auth/signup${search}`;
+    const queryParams = new URLSearchParams(
+      Object.entries(search).reduce((acc, [key, value]) => {
+        acc[key] = String(value);
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
+
+    return `/auth/login${queryParams ? `?${queryParams}` : ""}`;
   };
 
   return (

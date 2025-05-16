@@ -276,9 +276,8 @@ export function handleRedirect(fallbackUrl: string) {
   if (redirectUrl) {
     window.location.href = redirectUrl;
   } else {
-    if (redirectUrl) {
-      console.warn("Invalid redirect URL:", redirectUrl);
-    }
+    console.warn("Invalid redirect URL:", redirectUrl);
+
     window.location.href = fallbackUrl;
   }
 }
