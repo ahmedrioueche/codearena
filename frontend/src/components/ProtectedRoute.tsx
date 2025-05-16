@@ -21,6 +21,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     "loading" | "authenticated" | "unauthenticated" | "unverified"
   >("loading");
 
+  // Store the complete original URL for redirection
   const originalPath = pathname + search;
 
   useEffect(() => {
@@ -63,6 +64,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
 
         setAuthStatus("authenticated");
 
+        // Only navigate to game mode when authentication is successful
         if (gameMode) {
           navigate({ to: `/game/${gameMode}` });
         }
