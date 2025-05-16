@@ -268,3 +268,27 @@ export const getModeStats = (mode: GameMode) => {
       return [];
   }
 };
+
+export function handleRedirect(fallbackUrl: string) {
+  const searchParams = new URLSearchParams(window.location.search);
+  const redirectUrl = searchParams.get("redirect");
+
+  if (redirectUrl && isValidRedirect(redirectUrl)) {
+    window.location.href = redirectUrl;
+  } else {
+    if (redirectUrl) {
+      console.warn("Invalid redirect URL:", redirectUrl);
+    }
+    window.location.href = fallbackUrl;
+  }
+}
+
+// Basic security validation for redirect URLs
+export function isValidRedirect(url: string): boolean {
+  try {
+    // Only allow relative paths (no external domains)
+    return !new URL(url, window.location.origin).href.startsWith("http");
+  } catch {
+    return false;
+  }
+}

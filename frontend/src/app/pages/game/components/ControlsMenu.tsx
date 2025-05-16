@@ -18,9 +18,10 @@ import Tooltip, {
   TooltipTrigger,
 } from "../../../../components/ui/ToolTip";
 import useScreen from "../../../../hooks/useScreen";
+import { GameMode } from "../../../../types/game/game";
 
 interface ControlsMenuProps {
-  gameMode: "solo" | "battle";
+  gameMode: GameMode;
   isCollapsed: boolean;
   isGameStarted: boolean;
   isOpenOnMobile: boolean;

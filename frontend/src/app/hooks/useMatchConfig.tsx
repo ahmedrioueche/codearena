@@ -1,9 +1,10 @@
 import { useState, useCallback } from "react";
-import { MatchConfigInterface } from "../../types/game/game";
+import { MatchConfigI } from "../../types/game/game";
 
 const STORAGE_KEY = "match_config";
 
-const defaultConfig: MatchConfigInterface = {
+const defaultConfig: MatchConfigI = {
+  gameMode: "solo",
   language: "javascript",
   topics: ["algorithms", "data structure"],
   difficultyLevel: "medium",
@@ -12,7 +13,7 @@ const defaultConfig: MatchConfigInterface = {
 
 export function useMatchConfig() {
   // Initialize state with data from localStorage or default values
-  const [matchConfig, setMatchConfig] = useState<MatchConfigInterface>(() => {
+  const [matchConfig, setMatchConfig] = useState<MatchConfigI>(() => {
     try {
       const storedConfig = localStorage.getItem(STORAGE_KEY);
       if (!storedConfig) return defaultConfig;
@@ -36,7 +37,7 @@ export function useMatchConfig() {
 
   // Save config to localStorage
   const saveConfig = useCallback(
-    (newConfig: Partial<MatchConfigInterface>) => {
+    (newConfig: Partial<MatchConfigI>) => {
       try {
         const updatedConfig = { ...matchConfig, ...newConfig };
 
@@ -89,7 +90,7 @@ export function useMatchConfig() {
 }
 
 // Type guard to validate MatchConfig structure
-function isValidMatchConfig(config: any): config is MatchConfigInterface {
+function isValidMatchConfig(config: any): config is MatchConfigI {
   return (
     typeof config === "object" &&
     config !== null &&

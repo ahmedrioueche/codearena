@@ -46,6 +46,6 @@ export const modes = [
     ],
     icon: Users,
     playerCount: 0,
-    isImplemented: false,
+    isImplemented: true,
   },
 ];

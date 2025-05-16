@@ -1,15 +1,31 @@
 import { useState } from "react";
 import Input from "../../../../../../../components/ui/InputField";
-import { RoomSettings } from "./CreateRoom";
 import { GameMode } from "../../../../../../../types/game/game";
+import { RoomSettings } from "../../../../../../../types/game/room";
 
-function JoinRoom({}: { gameMode: GameMode }) {
+function JoinRoom({
+  gameMode,
+  onChange,
+}: {
+  gameMode: GameMode;
+  onChange: (roomSettings: RoomSettings) => void;
+}) {
   const [roomSettings, setRoomSettings] = useState<RoomSettings>({
+    gameMode: gameMode,
     roomName: "",
     maxPlayers: 2,
     teamSize: 1,
     roomCode: "",
   });
+
+  const handleRoomCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updatedSettings = {
+      ...roomSettings,
+      roomCode: e.target.value,
+    };
+    setRoomSettings(updatedSettings);
+    onChange(updatedSettings);
+  };
 
   return (
     <div className="space-y-4">
@@ -19,11 +35,8 @@ function JoinRoom({}: { gameMode: GameMode }) {
       <Input
         type="text"
         value={roomSettings.roomCode}
-        onChange={(e) =>
-          setRoomSettings({ ...roomSettings, roomCode: e.target.value })
-        }
+        onChange={handleRoomCodeChange}
         placeholder="Enter room code"
-        className="w-full p-3 rounded-lg border border-light-border dark:border-dark-border bg-light-background dark:bg-dark-background"
       />
     </div>
   );

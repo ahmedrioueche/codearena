@@ -3,6 +3,7 @@ import Login from "../components/Login";
 import ForgotPassword from "../components/ForgotPassword";
 import { APP_PAGES } from "../../../../../../constants/navigation";
 import toast from "react-hot-toast";
+import { handleRedirect } from "../../../../../../utils/helper";
 
 type View = "login" | "forgotPassword";
 const LoginPage = () => {
@@ -15,8 +16,8 @@ const LoginPage = () => {
     setCurrentView(view);
   };
 
-  const handleSignupSuccess = () => {
-    location.href = APP_PAGES.home.route;
+  const handleLoginSuccess = () => {
+    handleRedirect(APP_PAGES.home.route);
   };
 
   const handleResetPasswordSuccess = () => {
@@ -34,7 +35,7 @@ const LoginPage = () => {
             onForgotPassword={(email) =>
               handleNavigation("forgotPassword", email)
             }
-            onSuccess={() => handleSignupSuccess()}
+            onSuccess={() => handleLoginSuccess()}
           />
         );
       case "forgotPassword":
@@ -52,7 +53,7 @@ const LoginPage = () => {
             onForgotPassword={(email) =>
               handleNavigation("forgotPassword", email)
             }
-            onSuccess={() => handleSignupSuccess()}
+            onSuccess={() => handleLoginSuccess()}
           />
         );
     }

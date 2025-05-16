@@ -49,7 +49,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       "w-full px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent focus:ring-blue-500 transition-all";
 
     // Conditional classes
-    const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
+    const disabledClasses = disabled ? "opacity-50 cursor-auto" : "";
     const errorClasses = error ? "border-red-400" : "";
 
     // Combine all classes

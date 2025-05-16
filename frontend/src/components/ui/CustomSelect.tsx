@@ -84,7 +84,9 @@ const CustomSelect = <T extends string>({
 
   return (
     <div className="relative" ref={selectRef}>
-      <label className="font-semibold text-light-foreground">{title}</label>
+      <label className="font-normal text-sm text-light-text-primary dark:text-dark-text-primary">
+        {title}
+      </label>
       <div
         role="button"
         tabIndex={disabled ? -1 : 0}

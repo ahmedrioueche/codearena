@@ -7,6 +7,7 @@ export interface IUser {
   password: string;
   fullName: string;
   isVerified: boolean;
+  isAdmin: boolean;
   age: number;
   experienceLevel: ExperienceLevel;
   createdAt?: Date;

@@ -6,6 +6,7 @@ import { UserCreate } from "../../../../../../types/user";
 import { APP_PAGES } from "../../../../../../constants/navigation";
 import toast from "react-hot-toast";
 import { asteroids, stars } from "../../../../../../constants/general";
+import { handleRedirect } from "../../../../../../utils/helper";
 type View = "signup" | "emailVerification" | "userDetails";
 
 const SignupPage = () => {
@@ -19,7 +20,8 @@ const SignupPage = () => {
 
   const handleSuccess = () => {
     toast.success("Signup successful! Welcome to CodeArena!");
-    location.href = APP_PAGES.home.route;
+
+    handleRedirect(APP_PAGES.home.route);
   };
 
   const renderView = () => {

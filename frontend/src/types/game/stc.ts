@@ -17,7 +17,7 @@ export interface IncidentI {
   logs?: string[];
   files?: Array<{
     name: string;
-    type: "image" | "text" | "json" | "log";
+    type?: "image" | "text" | "json" | "log";
     content: string;
   }>;
   systemInfo?: string[];

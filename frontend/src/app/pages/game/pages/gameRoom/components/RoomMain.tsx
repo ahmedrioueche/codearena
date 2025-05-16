@@ -1,131 +1,187 @@
 import { useState } from "react";
-import { Search, Play } from "lucide-react";
+import { Play, Users, Plus, Shuffle } from "lucide-react";
+import { Team } from "../../../../../../types/game/game";
+import TeamContainer from "./ui/TeamContainer";
 
-interface Player {
-  id: string;
-  name: string;
-  avatar: string;
-  status: "ready" | "not-ready";
-}
-
-interface Team {
-  id: string;
-  name: string;
-  players: Player[];
-}
-
-const PlayerCard = ({ player }: { player: Player }) => (
-  <div className="flex items-center p-4 bg-light-background dark:bg-dark-background rounded-lg border border-light-border dark:border-dark-border shadow-sm hover:shadow-md transition-shadow">
-    <div className="w-10 h-10 rounded-full bg-light-primary/10 dark:bg-dark-primary/10 flex items-center justify-center">
-      <img
-        src="/icons/developer.png"
-        className="w-8 h-8 text-light-primary dark:text-dark-primary"
-      />
-    </div>
-    <div className="ml-3 flex-1">
-      <h3 className="font-medium text-light-foreground dark:text-dark-foreground">
-        {player.name}
-      </h3>
-      <span
-        className={`text-sm ${
-          player.status === "ready" ? "text-green-500" : "text-yellow-500"
-        }`}
-      >
-        {player.status === "ready" ? "Ready" : "Not Ready"}
-      </span>
-    </div>
-  </div>
-);
-
-const TeamContainer = ({ team }: { team: Team }) => (
-  <div className="bg-light-background/50 dark:bg-dark-background/50 rounded-xl p-4 space-y-4">
-    <div className="flex items-center justify-between mb-2">
-      <h2 className="text-lg font-semibold text-light-foreground dark:text-dark-foreground">
-        {team.name}
-      </h2>
-      <span className="text-sm text-light-foreground/60 dark:text-dark-foreground/60">
-        {team.players.length} players
-      </span>
-    </div>
-    <div className="space-y-3">
-      {team.players.map((player) => (
-        <PlayerCard key={player.id} player={player} />
-      ))}
-    </div>
-  </div>
-);
+// Color palette using only colors from your Tailwind config
+const TEAM_COLORS = [
+  "bg-light-primary dark:bg-dark-primary", // Primary color
+  "bg-light-accent dark:bg-dark-accent", // Accent color
+  "bg-light-secondary dark:bg-dark-secondary", // Secondary color
+  "bg-green-500", // From your green status color
+  "bg-yellow-500", // From your yellow status color
+];
 
 const RoomMain = () => {
-  const [isSearching, setIsSearching] = useState(false);
-  const [teams] = useState<Team[]>([
+  const [teams, setTeams] = useState<Team[]>([
     {
       id: "1",
       name: "Team Alpha",
+      color: TEAM_COLORS[0],
       players: [
-        { id: "1", name: "Player 1", avatar: "", status: "ready" },
-        { id: "2", name: "Player 2", avatar: "", status: "not-ready" },
+        {
+          id: "1",
+          name: "Player 1",
+          avatar: "",
+          status: "ready",
+          isCurrentUser: true,
+          rating: 0,
+          skillLevel: "beginner",
+        },
+        {
+          id: "2",
+          name: "Player 2",
+          avatar: "",
+          status: "not-ready",
+          isCurrentUser: false,
+          rating: 0,
+          skillLevel: "beginner",
+        },
       ],
     },
     {
       id: "2",
       name: "Team Beta",
+      color: TEAM_COLORS[1],
       players: [
-        { id: "3", name: "Player 3", avatar: "", status: "ready" },
-        { id: "4", name: "Player 4", avatar: "", status: "ready" },
+        {
+          id: "3",
+          name: "Player 3",
+          avatar: "",
+          status: "ready",
+          isCurrentUser: false,
+          rating: 0,
+          skillLevel: "beginner",
+        },
       ],
+    },
+    {
+      id: "3",
+      name: "Team Gamma",
+      color: TEAM_COLORS[2],
+      players: [],
     },
   ]);
 
+  const currentUser = teams
+    .flatMap((team) => team.players)
+    .find((player) => player.isCurrentUser);
+
+  const handleTeamChange = (playerId: string) => {
+    setTeams((prevTeams) => {
+      const playerTeamIndex = prevTeams.findIndex((team) =>
+        team.players.some((p) => p.id === playerId)
+      );
+
+      if (playerTeamIndex === -1) return prevTeams;
+
+      const player = prevTeams[playerTeamIndex].players.find(
+        (p) => p.id === playerId
+      );
+      if (!player) return prevTeams;
+
+      const updatedTeams = [...prevTeams];
+      updatedTeams[playerTeamIndex] = {
+        ...updatedTeams[playerTeamIndex],
+        players: updatedTeams[playerTeamIndex].players.filter(
+          (p) => p.id !== playerId
+        ),
+      };
+
+      let targetTeamIndex = (playerTeamIndex + 1) % updatedTeams.length;
+      updatedTeams[targetTeamIndex] = {
+        ...updatedTeams[targetTeamIndex],
+        players: [...updatedTeams[targetTeamIndex].players, player],
+      };
+
+      return updatedTeams;
+    });
+  };
+
+  const handleAddTeam = () => {
+    if (teams.length >= TEAM_COLORS.length) return;
+
+    setTeams((prevTeams) => [
+      ...prevTeams,
+      {
+        id: `team-${Date.now()}`,
+        name: `Team ${String.fromCharCode(65 + teams.length)}`,
+        color: TEAM_COLORS[teams.length],
+        players: [],
+      },
+    ]);
+  };
+
+  const handleShuffleTeams = () => {
+    setTeams((prevTeams) => {
+      const allPlayers = prevTeams.flatMap((team) => team.players);
+      const shuffledPlayers = [...allPlayers].sort(() => Math.random() - 0.5);
+
+      return prevTeams.map((team, index) => {
+        const playersPerTeam = Math.ceil(
+          shuffledPlayers.length / prevTeams.length
+        );
+        const start = index * playersPerTeam;
+        const end = start + playersPerTeam;
+        return {
+          ...team,
+          players: shuffledPlayers.slice(start, end),
+        };
+      });
+    });
+  };
+
   return (
     <div className="flex flex-col h-full w-full bg-light-background/80 dark:bg-dark-background/80">
-      {/* Main Content */}
       <div className="flex-1 p-2 md:p-6 space-y-6 overflow-y-auto">
-        {/* Search Status */}
-        {isSearching && (
-          <div className="bg-light-primary/5 dark:bg-dark-primary/5 rounded-lg p-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="animate-spin">
-                <Search className="w-5 h-5 text-light-primary dark:text-dark-primary" />
-              </div>
-              <span className="text-light-foreground dark:text-dark-foreground">
-                Searching for players...
-              </span>
-            </div>
-            <button
-              onClick={() => setIsSearching(false)}
-              className="text-sm text-light-primary dark:text-dark-primary hover:underline"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
-
-        {/* Teams Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {teams.map((team) => (
-            <TeamContainer key={team.id} team={team} />
+            <TeamContainer
+              key={team.id}
+              team={team}
+              onPlayerTeamChange={handleTeamChange}
+            />
           ))}
+
+          {teams.length < TEAM_COLORS.length && (
+            <button
+              onClick={handleAddTeam}
+              className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-light-border dark:border-dark-border rounded-xl hover:bg-light-background/50 dark:hover:bg-dark-background/50 transition-colors"
+            >
+              <Plus className="w-8 h-8 text-light-foreground/50 dark:text-dark-foreground/50 mb-2" />
+              <span className="text-light-foreground/50 dark:text-dark-foreground/50">
+                Add Team
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Bottom Actions */}
-      <div className="p-4 bg-light-background dark:bg-dark-background">
+      <div className="p-4 bg-light-background dark:bg-dark-background border-t border-light-border dark:border-dark-border">
         <div className="flex justify-between items-center px-2 md:px-6">
-          <button
-            onClick={() => setIsSearching(true)}
-            disabled={isSearching}
-            className={`px-6 py-2 rounded-lg flex items-center space-x-2 
-              ${
-                isSearching
-                  ? "bg-light-secondary-disabled dark:bg-dark-secondary-disabled text-light-foreground/50 dark:text-dark-foreground/50"
-                  : "bg-light-accent dark:bg-dark-accent text-white hover:opacity-90"
-              } transition-colors`}
-          >
-            <Search className="w-5 h-5" />
-            <span>Search for Players</span>
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={handleShuffleTeams}
+              className="px-4 py-2 rounded-lg flex items-center space-x-2 bg-light-secondary dark:bg-dark-secondary text-light-foreground dark:text-dark-foreground hover:bg-light-secondary/80 dark:hover:bg-dark-secondary/80 transition-colors"
+            >
+              <Shuffle className="w-5 h-5" />
+              <span>Shuffle Teams</span>
+            </button>
 
-          <button className="px-6 py-2 bg-light-primary dark:bg-dark-primary text-white rounded-lg flex items-center space-x-2 hover:opacity-90 transition-opacity">
+            <button className="px-4 py-2 rounded-lg flex items-center space-x-2 bg-light-secondary dark:bg-dark-secondary text-light-foreground dark:text-dark-foreground hover:bg-light-secondary/80 dark:hover:bg-dark-secondary/80 transition-colors">
+              <Users className="w-5 h-5" />
+              <span>Invite Players</span>
+            </button>
+          </div>
+
+          <button
+            disabled={!currentUser || currentUser.status !== "ready"}
+            className={`px-6 py-2 rounded-lg flex items-center space-x-2 transition-opacity ${
+              currentUser?.status === "ready"
+                ? "bg-light-primary dark:bg-dark-primary text-white hover:opacity-90"
+                : "bg-light-secondary-disabled dark:bg-dark-secondary-disabled text-light-foreground/50 dark:text-dark-foreground/50"
+            }`}
+          >
             <Play className="w-5 h-5" />
             <span>Start Game</span>
           </button>

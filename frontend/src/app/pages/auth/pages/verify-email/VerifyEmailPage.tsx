@@ -1,12 +1,13 @@
 import EmailVerification from "../signup/components/EmailVerification";
 import { useAppContext } from "../../../../../context/AppContext";
-import { Navigate, useNavigate } from "@tanstack/react-router";
+import { Navigate } from "@tanstack/react-router";
 import { updateUser } from "../../../../../api/user";
 import toast from "react-hot-toast";
+import { handleRedirect } from "../../../../../utils/helper";
+import { APP_PAGES } from "../../../../../constants/navigation";
 
 function VerifyEmailPage() {
   const { currentUser, setCurrentUser } = useAppContext();
-  const navigate = useNavigate();
 
   const handleSuccess = async () => {
     try {
@@ -15,7 +16,8 @@ function VerifyEmailPage() {
         ...prev,
         isVerified: true,
       }));
-      navigate({ to: "/" });
+
+      handleRedirect(APP_PAGES.home.route);
     } catch (e) {
       toast.error("email verification failed, please try again");
     }
