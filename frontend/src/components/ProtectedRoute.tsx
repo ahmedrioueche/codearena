@@ -1,4 +1,4 @@
-import { Navigate, useLocation, useNavigate } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { getUser } from "../api/user";
 import { useAppContext } from "../context/AppContext";
@@ -12,7 +12,7 @@ type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
-  const { pathname, search } = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
   const { setCurrentUser } = useAppContext();
   const { saveConfig } = useMatchConfig();
@@ -21,12 +21,9 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     "loading" | "authenticated" | "unauthenticated" | "unverified"
   >("loading");
 
-  // Store the complete original URL for redirection
-  const originalPath = pathname + search;
-
   useEffect(() => {
     const extractAndSaveConfig = (): string | null => {
-      const params = new URLSearchParams(search);
+      const params = new URLSearchParams(location.search);
       const gameMode = params.get("gameMode") as GameMode | null;
 
       const urlConfig: Partial<MatchConfigI> = {
@@ -89,26 +86,48 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
     };
 
     checkAuth();
-  }, [setCurrentUser, search, saveConfig, navigate, pathname]);
+  }, [
+    setCurrentUser,
+    location.search,
+    saveConfig,
+    navigate,
+    location.pathname,
+  ]);
 
   if (authStatus === "loading") {
     return <LoadingScreen />;
   }
 
   if (authStatus === "unauthenticated") {
-    return (
-      <Navigate
-        to={`/auth/login?redirect=${encodeURIComponent(originalPath)}`}
-      />
-    );
+    // Instead of using Navigate component with redirect params, use navigate function directly
+    useEffect(() => {
+      // Create a clean URL string for the redirect parameter
+      const redirectPath = `${location.pathname}${location.search}`;
+
+      // Navigate programmatically with search params
+      window.location.href = `/auth/login?redirect=${encodeURIComponent(
+        redirectPath
+      )}`;
+    }, []);
+
+    // Return loading while the redirect happens
+    return <LoadingScreen />;
   }
 
   if (authStatus === "unverified") {
-    return (
-      <Navigate
-        to={`/auth/verify-email?redirect=${encodeURIComponent(originalPath)}`}
-      />
-    );
+    // Instead of using Navigate component with redirect params, use navigate function directly
+    useEffect(() => {
+      // Create a clean URL string for the redirect parameter
+      const redirectPath = `${location.pathname}${location.search}`;
+
+      // Navigate programmatically with search params
+      window.location.href = `/auth/verify-email?redirect=${encodeURIComponent(
+        redirectPath
+      )}`;
+    }, []);
+
+    // Return loading while the redirect happens
+    return <LoadingScreen />;
   }
 
   return <>{children}</>;
