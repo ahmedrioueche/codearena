@@ -272,8 +272,8 @@ export const getModeStats = (mode: GameMode) => {
 export function handleRedirect(fallbackUrl: string) {
   const searchParams = new URLSearchParams(window.location.search);
   const redirectUrl = searchParams.get("redirect");
-
-  if (redirectUrl && isValidRedirect(redirectUrl)) {
+  console.log("redirect:", redirectUrl);
+  if (redirectUrl) {
     window.location.href = redirectUrl;
   } else {
     if (redirectUrl) {

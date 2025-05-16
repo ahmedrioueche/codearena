@@ -21,8 +21,13 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
   >("loading");
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [redirectPath, setRedirectPath] = useState("");
+  const { pathname } = useLocation();
 
   useEffect(() => {
+    if (pathname.startsWith("/auth")) {
+      return;
+    }
+
     const params = new URLSearchParams(search);
     const gameMode = params.get("gameMode");
 
