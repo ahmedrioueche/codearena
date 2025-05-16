@@ -23,6 +23,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
   useEffect(() => {
     const params = new URLSearchParams(search);
     const gameMode = params.get("gameMode");
+    console.log("gameMode in useEffect", gameMode);
 
     // Save all config parameters to localStorage
     if (params.size > 0) {
@@ -51,7 +52,6 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
         }
 
         setAuthStatus("authenticated");
-
         // If gameMode exists, redirect directly to game page
         if (gameMode) {
           navigate({ to: `/game/${gameMode}` });
