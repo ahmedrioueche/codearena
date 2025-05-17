@@ -22,7 +22,7 @@ export const modes = [
       "Learn from historic coding disasters.",
     ],
     icon: Code,
-    isImplemented: true,
+    isImplemented: false,
   },
   {
     modeId: "battle" as GameMode,
@@ -46,6 +46,6 @@ export const modes = [
     ],
     icon: Users,
     playerCount: 0,
-    isImplemented: true,
+    isImplemented: false,
   },
 ];
