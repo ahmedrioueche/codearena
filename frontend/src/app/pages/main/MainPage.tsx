@@ -1,18 +1,16 @@
 import { useState } from "react";
 import Navbar from "../../../components/Navbar";
-import LeftSidebar from "./components/LeftSidebar";
+import Sidebar from "./components/Sidebar";
 import { Outlet, useMatchRoute } from "@tanstack/react-router";
-import Home from "./pages/home/pages/Home";
+import HomePage from "./pages/home/pages/Home";
 
 const MainPage = () => {
   const matchRoute = useMatchRoute();
   const isRoot = matchRoute({ to: "/" });
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-
-  const closeSidebar = () => setIsSidebarCollapsed(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
-    <div className="relative min-h-screen font-stix overflow-hidden">
+    <div className="relative min-h-screen font-stix">
       {/* Background Elements */}
       <div
         className="fixed inset-0 -z-10"
@@ -43,19 +41,23 @@ const MainPage = () => {
 
       {/* Content */}
       <div className="relative z-10">
-        <Navbar />
+        <Navbar toggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)} />
 
         {/* Main Layout */}
-        <div className="mt-24 flex flex-1 w-full gap-4 p-1 md:px-4 px-2">
-          {/* Sidebar Overlay */}
-          <LeftSidebar
+        <div className="mt-24 flex w-full">
+          {/* Floating Sidebar will position itself absolutely */}
+          <Sidebar
             isCollapsed={isSidebarCollapsed}
-            onClose={closeSidebar}
+            onClose={() => setIsSidebarCollapsed(false)}
           />
 
-          {/* Center Content */}
-          <div className="flex-1 md:px-4 px-2 transition-all duration-300 overflow-x-hidden">
-            {isRoot ? <Home /> : <Outlet />}
+          {/* Center Content with proper spacing */}
+          <div
+            className={`flex-1 transition-all duration-300 ${
+              isSidebarCollapsed ? "pl-4" : "pl-72"
+            } pr-4`}
+          >
+            <div className="mx-auto">{isRoot ? <HomePage /> : <Outlet />}</div>
           </div>
         </div>
       </div>

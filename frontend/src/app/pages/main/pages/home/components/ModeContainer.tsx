@@ -11,7 +11,7 @@ const ModesContainer = () => {
   const [activeMode, setActiveMode] = useState<GameMode | "null">("null");
 
   return (
-    <div className="space-y-8">
+    <div className="grid md:grid-cols-2 grid-cols-1 gap-8 ">
       {modes.map((mode) => (
         <ModeCard
           key={mode.modeId}

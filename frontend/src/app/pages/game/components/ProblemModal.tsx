@@ -38,7 +38,7 @@ const ProblemModal: React.FC<ProblemModalProps> = ({
       title={problem ? problem.title : "Problem Details"}
       icon={Code}
       width="70vw"
-      height="90vh"
+      height="95vh"
     >
       <div className="p-4 overflow-auto">
         {problem ? (

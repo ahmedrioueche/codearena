@@ -17,9 +17,9 @@ interface RoomResponse {
 }
 
 export const RoomApi = {
-  createRoom: async (username: string): Promise<RoomResponse> => {
+  createRoom: async (): Promise<RoomResponse> => {
     try {
-      const response = await roomAxios.post("/room/create", { username });
+      const response = await roomAxios.post("/room/create");
       console.log("response in createRoom", response);
       return response.data;
     } catch (error: any) {
@@ -27,11 +27,10 @@ export const RoomApi = {
     }
   },
 
-  joinRoom: async (username: string, code: string): Promise<RoomResponse> => {
+  joinRoom: async (code: string): Promise<RoomResponse> => {
     try {
       const lowerCode = code.toLowerCase();
       const response = await roomAxios.post("/room/join", {
-        username,
         code: lowerCode,
       });
       console.log("response in joinRoom", response);

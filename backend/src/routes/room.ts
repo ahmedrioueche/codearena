@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import { RoomController } from '../controllers/room';
+import { authMiddleware } from '../middlewares/auth';
 
 const router = Router();
 
-router.post('/create', RoomController.createRoom as any);
-router.post('/join', RoomController.joinRoom as any);
-router.get('/:code', RoomController.getRoom as any);
-router.delete('/close', RoomController.closeRoom as any);
-router.delete('/remove-user', RoomController.removeUser as any);
-router.patch('/:code/settings', RoomController.updateSettings as any);
-router.post('/leave', RoomController.leaveRoom as any);
+router.post('/create', authMiddleware, RoomController.createRoom as any);
+router.post('/join', authMiddleware, RoomController.joinRoom as any);
+router.get('/:code', authMiddleware, RoomController.getRoom as any);
+router.delete('/close', authMiddleware, RoomController.closeRoom as any);
+router.delete('/remove-user', authMiddleware, RoomController.removeUser as any);
+router.patch('/:code/settings', authMiddleware, RoomController.updateSettings as any);
+router.post('/leave', authMiddleware, RoomController.leaveRoom as any);
 
 export default router;
