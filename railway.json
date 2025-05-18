@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "nixpacks",
+    "rootDirectory": "backend"
+  },
+  "deploy": {
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
