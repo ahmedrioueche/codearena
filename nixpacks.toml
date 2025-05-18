@@ -1,9 +1,0 @@
-[build]
-baseImage = "node:18"
-setup = ["npm install --prefix backend"]
-build = ["npm run build --prefix backend"]
-start = "npm start --prefix backend"
-
-[detect]
-language = "node"
-nodeVersion = "18"
