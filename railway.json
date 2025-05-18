@@ -1,0 +1,6 @@
+{
+  "build": {
+    "path": "backend",
+    "command": "npm install && npm run build"
+  }
+}
