@@ -35,7 +35,7 @@ export const modes = [
     ],
     icon: Users,
     playerCount: 0,
-    isImplemented: false,
+    isImplemented: true,
   },
   {
     modeId: "save-the-code" as GameMode,
