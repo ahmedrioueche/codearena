@@ -1,13 +1,17 @@
 [build]
+baseImage = "node:18"
+
 setup = [
     { cmd = "cd backend && npm install" }
 ]
+
 build = [
     { cmd = "cd backend && npm run build" }
 ]
-start = [
-    { cmd = "cd backend && npm start" }
-]
+
+start = { cmd = "cd backend && npm start" }
 
 [detect]
+language = "node"
 include = ["backend/*"]
+exclude = ["frontend"]
