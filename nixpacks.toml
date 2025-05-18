@@ -1,0 +1,7 @@
+[phases]
+setup = "cd backend && npm install"
+build = "cd backend && npm run build"
+start = "cd backend && npm start"
+
+[plan]
+provider = "nixpacks"
