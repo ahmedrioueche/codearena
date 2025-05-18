@@ -1,11 +1,13 @@
 import ModesContainer from "../components/ModeContainer";
+import Profile from "../components/Profile";
 
-const Home = () => {
+const HomePage = () => {
   return (
-    <div className="container mx-auto p-2 py-0 max-w-10xl dark:bg-dark-background ">
+    <div className="container space-y-10 mx-auto p-2 py-0  dark:bg-dark-background ">
+      <Profile />
       <ModesContainer />
     </div>
   );
 };
 
-export default Home;
+export default HomePage;

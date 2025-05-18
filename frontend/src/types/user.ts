@@ -13,6 +13,7 @@ export interface User {
   rank: Rank;
   accuracy: number;
   wins: number;
+  playStatus?: "ready" | "not-ready";
 }
 
 export interface UserCreate {

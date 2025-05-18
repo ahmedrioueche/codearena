@@ -6,120 +6,145 @@ import "tippy.js/dist/tippy.css";
 const Profile = () => {
   const { currentUser } = useAppContext();
 
-  // Rank color mapping
-  const rankColors: Record<string, string> = {
-    Noob: "bg-gray-500/20 text-gray-500",
-    Beginner: "bg-blue-500/20 text-blue-500",
-    Intermediate: "bg-purple-500/20 text-purple-500",
-    Advanced: "bg-green-500/20 text-green-500",
-    Expert: "bg-yellow-500/20 text-yellow-500",
-    Master: "bg-orange-500/20 text-orange-500",
-    Legend: "bg-red-500/20 text-red-500",
-  };
+  // Rank color mapping with updated glow effects
+  const rankColors: Record<string, { bg: string; text: string; glow: string }> =
+    {
+      Noob: {
+        bg: "bg-gray-500/20",
+        text: "text-gray-400",
+        glow: "shadow-gray-500/20",
+      },
+      Beginner: {
+        bg: "bg-blue-500/20",
+        text: "text-blue-400",
+        glow: "shadow-blue-500/20",
+      },
+      Intermediate: {
+        bg: "bg-purple-500/20",
+        text: "text-purple-400",
+        glow: "shadow-purple-500/20",
+      },
+      Advanced: {
+        bg: "bg-green-500/20",
+        text: "text-green-400",
+        glow: "shadow-green-500/20",
+      },
+      Expert: {
+        bg: "bg-yellow-500/20",
+        text: "text-yellow-400",
+        glow: "shadow-yellow-500/20",
+      },
+      Master: {
+        bg: "bg-orange-500/20",
+        text: "text-orange-400",
+        glow: "shadow-orange-500/20",
+      },
+      Legend: {
+        bg: "bg-red-500/20",
+        text: "text-red-400",
+        glow: "shadow-red-500/20",
+      },
+    };
 
   const userRank = currentUser.rank || "Noob";
   const rankClass = rankColors[userRank] || rankColors["Noob"];
 
   return (
-    <div className="relative group perspective-1000">
-      {/* Gradient background */}
-      <div
-        className="absolute inset-0 rounded-xl opacity-0 blur-xl transition-all duration-1000 animate-gradient-xy"
-        style={{
-          background:
-            "linear-gradient(135deg, #001122 0%, #001A2F 50%, #00253D 100%)",
-        }}
-      />
-
-      {/* Main card content */}
-      <div className="relative transform transition-all duration-500">
+    <div className="relative group perspective-1000 h-full">
+      {/* Enhanced Animated Background */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden">
         <div
-          className="p-6 rounded-xl backdrop-blur-sm border border-light-border dark:border-dark-border hover:shadow-lg transition-all duration-300"
+          className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900/80 to-indigo-900/80"
           style={{
-            background:
-              "linear-gradient(135deg, #001122 0%, #001A2F 50%, #00253D 100%)",
+            backgroundSize: "200% 200%",
+            animation: "gradientShift 8s ease infinite",
           }}
-        >
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            {/* Left Section - Avatar and Info */}
-            <div className="flex flex-row md:items-center items-start space-x-6 mb-4 md:mb-0">
-              {/* Developer Avatar with Rank Border */}
-              <div className={`transform transition-all duration-500`}>
-                <img
-                  src="/icons/developer.png"
-                  className="h-12 w-12 rounded-xl border-2 border-light-primary/30 dark:border-dark-primary/30"
-                  alt="Developer Avatar"
-                />
-              </div>
-
-              {/* Name and Details */}
-              <div className="space-y-1">
-                <div className="flex items-center space-x-3">
-                  <h2 className="text-xl font-bold text-light-foreground dark:text-dark-foreground">
-                    {currentUser.username}
-                  </h2>
-                </div>
-                <span
-                  className={`px-2 py-0.5 rounded text-xs font-medium w-fit ${rankClass}`}
-                >
-                  {userRank}
-                </span>
-              </div>
+        />
+        <div
+          className="absolute inset-0 opacity-15 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"
+          style={{
+            mixBlendMode: "overlay",
+          }}
+        />
+      </div>
+      {/* Main Card Content */}
+      <div className="relative h-full p-6 md:p-8 rounded-2xl backdrop-blur-sm border border-white/20 overflow-hidden">
+        {/* Profile Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+          <div className="flex items-center gap-4">
+            <div className={`p-1 rounded-xl ${rankClass.glow} shadow-lg`}>
+              <img
+                src="/icons/developer.png"
+                className="h-14 w-14 rounded-xl border-2 border-white/30"
+                alt="Developer Avatar"
+              />
             </div>
-
-            {/* Right Section - Battle Stats */}
-            <div className="flex flex-row justify-around md:justify-end w-full md:w-auto items-center space-x-4 md:space-x-6">
-              <Tippy content="Total Wins" placement="top" arrow={false}>
-                <div className="flex flex-col items-center px-3 py-2 rounded-lg group transition-colors">
-                  <Sword
-                    size={24}
-                    className="text-light-primary dark:text-dark-primary mb-1 group-hover:scale-110 transition-transform"
-                  />
-                  <span className="text-xl font-bold text-light-foreground dark:text-dark-foreground">
-                    {currentUser.wins || 0}
-                  </span>
-                  <span className="text-xs text-light-secondary dark:text-dark-secondary">
-                    Wins
-                  </span>
-                </div>
-              </Tippy>
-
-              <Tippy
-                content="Accuracy Percentage"
-                placement="top"
-                arrow={false}
+            <div>
+              <h2 className="text-2xl font-bold text-white">
+                {currentUser.username}
+              </h2>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium mt-1 inline-block ${rankClass.bg} ${rankClass.text}`}
               >
-                <div className="flex flex-col items-center px-3 py-2 rounded-lg group transition-colors">
-                  <Target
-                    size={24}
-                    className="text-light-primary dark:text-dark-primary mb-1 group-hover:scale-110 transition-transform"
-                  />
-                  <span className="text-xl font-bold text-light-foreground dark:text-dark-foreground">
-                    {currentUser.accuracy ? `${currentUser.accuracy}%` : "0%"}
-                  </span>
-                  <span className="text-xs text-light-secondary dark:text-dark-secondary">
-                    Accuracy
-                  </span>
-                </div>
-              </Tippy>
-
-              <Tippy content="Total Points" placement="top" arrow={false}>
-                <div className="flex flex-col items-center px-3 py-2 rounded-lg group transition-colors">
-                  <Zap
-                    size={24}
-                    className="text-green-500 mb-1 group-hover:scale-110 transition-transform"
-                  />
-                  <span className="text-xl font-bold text-light-foreground dark:text-dark-foreground">
-                    {currentUser.score || 0}
-                  </span>
-                  <span className="text-xs text-light-secondary dark:text-dark-secondary">
-                    Points
-                  </span>
-                </div>
-              </Tippy>
+                {userRank}
+              </span>
             </div>
           </div>
+
+          {/* Status Indicator */}
+          <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="text-sm text-white/90">Active</span>
+          </div>
         </div>
+
+        <div className="flex flex-row flex-wrap items-center gap-4 md:gap-6 mt-8">
+          <Tippy content="Total Wins" placement="top" arrow={false}>
+            <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:bg-white/10 transition-colors group flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors">
+                <Sword size={18} className="text-blue-400" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-white">
+                  {currentUser.wins || 0}
+                </span>
+                <span className="text-xs text-white/70">Wins</span>
+              </div>
+            </div>
+          </Tippy>
+
+          <Tippy content="Accuracy Percentage" placement="top" arrow={false}>
+            <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:bg-white/10 transition-colors group flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-purple-500/20 group-hover:bg-purple-500/30 transition-colors">
+                <Target size={18} className="text-purple-400" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-white">
+                  {currentUser.accuracy ? `${currentUser.accuracy}%` : "0%"}
+                </span>
+                <span className="text-xs text-white/70">Accuracy</span>
+              </div>
+            </div>
+          </Tippy>
+
+          <Tippy content="Total Points" placement="top" arrow={false}>
+            <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:bg-white/10 transition-colors group flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
+                <Zap size={18} className="text-green-400" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-white">
+                  {currentUser.score || 0}
+                </span>
+                <span className="text-xs text-white/70">Points</span>
+              </div>
+            </div>
+          </Tippy>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full filter blur-3xl -z-10" />
+        <div className="absolute top-0 left-0 w-24 h-24 bg-purple-500/10 rounded-full filter blur-3xl -z-10" />
       </div>
     </div>
   );

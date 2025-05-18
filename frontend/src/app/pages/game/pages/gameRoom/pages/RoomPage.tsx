@@ -1,35 +1,47 @@
 import RoomSettings from "../components/RoomSettings";
-import RoomOptions from "../components/RoomOptions";
 import RoomMain from "../components/RoomMain";
 import { settingsActions } from "../../../../../../store";
-import { Copy, Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import useScreen from "../../../../../../hooks/useScreen";
 import { useRoom } from "../hooks/useRoom";
 import { useAppContext } from "../../../../../../context/AppContext";
+import { useRealtime } from "../../../hooks/useRealTime";
+import { EVENTS } from "../../../../../../constants/events";
+import toast from "react-hot-toast";
+import { User } from "../../../../../../types/user";
 
 function RoomPage() {
   settingsActions.setTheme("dark");
-  const { currentRoom } = useAppContext();
-  const [copied, setCopied] = useState(false);
+  const { currentUser, currentRoom } = useAppContext();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { isMobile } = useScreen();
-  const roomCode = currentRoom.code;
-  const { validateRoom } = useRoom();
+  const { users, validateRoom, addUser, removeUser } = useRoom();
 
   useEffect(() => {
     validateRoom();
   }, []);
 
-  const handleCopyRoomId = async () => {
-    try {
-      await navigator.clipboard.writeText(roomCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy room ID:", err);
-    }
-  };
+  useRealtime({
+    channelName: `room-${currentRoom.code}`,
+    eventName: EVENTS.JOINED_ROOM,
+    onEvent: (user: User) => {
+      console.log("Received data:", user);
+      if (user.username !== currentUser.username)
+        toast.success(`${user.username} just joined!`);
+      addUser(user);
+    },
+  });
+
+  useRealtime({
+    channelName: `room-${currentRoom.code}`,
+    eventName: EVENTS.LEFT_ROOM,
+    onEvent: (user: User) => {
+      console.log("Received data:", user);
+      if (user.username !== currentUser.username)
+        toast.error(`${user.username} left`);
+      removeUser(user._id);
+    },
+  });
 
   return (
     <div
@@ -60,37 +72,11 @@ function RoomPage() {
             >
               Room Settings
             </button>
-            {/* Room ID Section */}
-            <div className="p-4 bg-white dark:bg-dark-background border border-light-border dark:border-dark-border rounded-lg relative z-0">
-              {" "}
-              {/* Added z-0 */}
-              <div className="flex items-center justify-between">
-                <span className="text-light-foreground dark:text-dark-foreground font-mono">
-                  {roomCode}
-                </span>
-                <button
-                  onClick={handleCopyRoomId}
-                  className="flex items-center gap-2 px-4 py-2 bg-light-primary dark:bg-dark-primary text-white rounded-md hover:opacity-90 transition-opacity relative z-0"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                  {copied ? "Copied!" : "Copy ID"}
-                </button>
-              </div>
-            </div>
           </div>
 
           {/* Centered Main Section */}
           <div className="flex-1 flex justify-center items-center">
-            <RoomMain />
-          </div>
-
-          {/* Right-Side Options (Hidden on Mobile) */}
-          <div className="hidden lg:block w-1/4">
-            <RoomOptions roomCode={roomCode} />
+            <RoomMain room={currentRoom} users={users} />
           </div>
         </div>
       </div>

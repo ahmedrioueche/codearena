@@ -1,4 +1,5 @@
 import { languages } from "../../constants/game";
+import { User } from "../user";
 
 export type GameMode = "solo" | "battle" | "collab" | "save-the-code";
 
@@ -21,20 +22,10 @@ export const CONFIG_MODES = {
   JOIN: "join",
 } as const;
 
-export interface Player {
-  id: string;
-  name: string;
-  rating: number;
-  skillLevel: "beginner" | "junior" | "intermediate" | "senior";
-  avatar: string;
-  status: "ready" | "not-ready";
-  isCurrentUser: boolean;
-}
-
 export interface Team {
   id: string;
   name: string;
-  players: Player[];
+  players: User[];
   color: string;
 }
 

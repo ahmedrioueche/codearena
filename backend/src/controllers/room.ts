@@ -7,25 +7,22 @@ import { IRoomDocument } from '../types/room';
 import { pusher } from '../services/pusher';
 import { getRoomChannel } from '../services/pusher/channels';
 import { EVENTS } from '../constants/events';
+import { AuthenticatedRequest } from '../types/express';
 
 export class RoomController {
   // 1. Create a room with settings
-  static createRoom = async (req: Request, res: Response) => {
+  static createRoom = async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { username, settings } = req.body;
+      const settings = req.body?.settings || {
+        mode: GameModeEnum.RANDOM,
+        category: CategoryEnum.ANIMAL,
+        questionTime: 30,
+        RoundsPerMatch: 5,
+      };
 
-      if (!username) {
-        return res.status(400).json({ error: 'Username is required' });
-      }
-
-      let user = await UserModel.findOne({ username });
-
+      const user = await UserModel.findById(req?.user?.userId);
       if (!user) {
-        user = await UserModel.create({
-          username,
-          score: '0',
-          isAdmin: true,
-        });
+        return res.status(404).json({ message: 'User not found' });
       }
 
       const code = Math.random().toString(36).substring(2, 8).toLowerCase();
@@ -33,12 +30,7 @@ export class RoomController {
       const room = await RoomModel.create({
         code,
         users: [user._id],
-        settings: settings || {
-          mode: GameModeEnum.RANDOM,
-          category: CategoryEnum.ANIMAL,
-          questionTime: 30,
-          RoundsPerMatch: 5,
-        },
+        settings, // Use the settings from body or default
       });
 
       const populatedRoom = await RoomModel.findById(room._id).populate('users').lean();
@@ -54,22 +46,19 @@ export class RoomController {
   };
 
   // 2. Join a room
-  static joinRoom = async (req: Request, res: Response) => {
+  static joinRoom = async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { username, code } = req.body;
+      const user = await UserModel.findById(req?.user?.userId);
 
-      if (!username || !code) {
-        return res.status(400).json({
-          error: 'Username and room code are required',
-        });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
       }
 
-      let user = await UserModel.findOne({ username });
-      if (!user) {
-        user = await UserModel.create({
-          username,
-          score: '0',
-          isAdmin: false,
+      const { code } = req.body;
+      console.log({ code });
+      if (!code) {
+        return res.status(400).json({
+          error: 'Room code is required',
         });
       }
 
@@ -90,6 +79,7 @@ export class RoomController {
 
       const populatedRoom = await RoomModel.findById(room._id).populate('users').lean();
 
+      console.log({ room });
       await pusher.trigger(getRoomChannel(room.code), EVENTS.JOINED_ROOM, user);
 
       return res.status(200).json({

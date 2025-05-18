@@ -17,7 +17,7 @@ const CollabModeSetupModal: React.FC<{
 }> = ({ isOpen, onClose }) => {
   const [configMode, setConfigMode] = useState<ConfigMode>(CONFIG_MODES.SEARCH);
   const [isSeachStarted, setIsSeachStarted] = useState(false);
-  const { currentUser, setCurrentRoom } = useAppContext();
+  const { setCurrentRoom } = useAppContext();
   const [roomCode, setRoomCode] = useState("");
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const CollabModeSetupModal: React.FC<{
     }
     if (configMode === CONFIG_MODES.CREATE) {
       try {
-        const res = await RoomApi.createRoom(currentUser.username);
+        const res = await RoomApi.createRoom();
         if (res) setCurrentRoom(res.room);
         toast.success(`Room created`);
         router.navigate({ to: APP_PAGES.game.room.route });
@@ -44,7 +44,7 @@ const CollabModeSetupModal: React.FC<{
     }
     if (configMode === CONFIG_MODES.JOIN) {
       try {
-        const res = await RoomApi.joinRoom(currentUser.username, roomCode);
+        const res = await RoomApi.joinRoom(roomCode);
         if (res) setCurrentRoom(res.room);
         toast.success(`Joined room with code ${roomCode}`);
         router.navigate({ to: APP_PAGES.game.room.route });
