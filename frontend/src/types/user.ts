@@ -1,4 +1,4 @@
-type Rank = "noob" | "not_bad" | "good" | "pro" | "legend";
+export type Rank = "noob" | "not_bad" | "good" | "pro" | "legend";
 export type ExperienceLevel = "beginner" | "intermediate" | "expert";
 
 export interface User {

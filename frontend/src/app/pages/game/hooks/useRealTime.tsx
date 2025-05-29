@@ -3,23 +3,29 @@ import { pusher } from "../../../../utils/pusher";
 
 interface UseRealtimeOptions {
   channelName: string;
-  eventName: string;
-  onEvent: (data: any) => void;
+  events: {
+    [key: string]: (data: any) => void;
+  };
 }
 
 export const useRealtime = ({
   channelName,
-  eventName,
-  onEvent,
+  events,
 }: UseRealtimeOptions) => {
   useEffect(() => {
     const channel = pusher.subscribe(channelName);
 
-    channel.bind(eventName, onEvent);
+    // Bind all events
+    Object.entries(events).forEach(([eventName, handler]) => {
+      channel.bind(eventName, handler);
+    });
 
     return () => {
-      channel.unbind(eventName, onEvent);
+      // Cleanup all event bindings
+      Object.entries(events).forEach(([eventName, handler]) => {
+        channel.unbind(eventName, handler);
+      });
       pusher.unsubscribe(channelName);
     };
-  }, [channelName, eventName, onEvent]);
+  }, [channelName, events]);
 };

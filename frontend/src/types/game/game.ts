@@ -7,15 +7,6 @@ export type ConfigMode = "search" | "teamup" | "create" | "join";
 
 export type DifficultyLevel = "easy" | "medium" | "hard";
 
-export interface GameSettings {
-  language: string;
-  maxPlayers: string;
-  difficultyLevel: DifficultyLevel;
-  teamSize: string;
-  timeLimit: string;
-  topics: string[];
-}
-
 export const CONFIG_MODES = {
   SEARCH: "search",
   CREATE: "create",
@@ -42,15 +33,17 @@ export interface ProgrammingLanguageI {
 
 export type ProgrammingLanguageT = (typeof languages)[number]["id"];
 
-export interface MatchConfigI {
+export interface GameSettings {
   gameMode?: GameMode;
   language: string;
   topics: string[];
   difficultyLevel: DifficultyLevel;
-  timeLimit: string;
+  timeLimit: number;
+  teamSize?: number;
+  maxPlayers?: number;
 }
 
-export interface DifficultyLevelInterface {
+export interface DifficultyLevelI {
   id: string;
   name: string;
   description: string;

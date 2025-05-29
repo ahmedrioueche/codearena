@@ -2,41 +2,99 @@ import React, { useState, useEffect } from "react";
 import { Users, Loader2, Gamepad2 } from "lucide-react";
 import { GameMode } from "../../../../../../../types/game/game";
 import { Card, CardContent } from "../../../../../../../components/ui/Card";
-import { GameSettings, Player } from "../../../../../../../types/game/game";
+import { GameSettings } from "../../../../../../../types/game/game";
+import { User } from "../../../../../../../types/user";
+import { GameApi } from "../../../../../../../api/game/game";
+import { useAppContext } from "../../../../../../../context/AppContext";
+import Button from "../../../../../../../components/ui/Button";
 
-type SearchState = "searching" | "found" | "ready";
+type SearchState = "idle" | "searching" | "found" | "ready" | "error";
+
+interface MatchProgress {
+  message: string;
+  matchedCount: number;
+}
 
 const GameSearch: React.FC<{
   gameMode: GameMode;
   gameSettings: GameSettings;
-}> = ({ gameMode, gameSettings }) => {
-  const [searchState, setSearchState] = useState<SearchState>("searching");
-  const [foundPlayers, setFoundPlayers] = useState<Player[]>([]);
+  isSearchStarted: boolean;
+}> = ({ gameSettings, isSearchStarted }) => {
+  const [searchState, setSearchState] = useState<SearchState>("idle");
+  const [foundPlayers, setFoundPlayers] = useState<User[]>([]);
+  const [countdown, setCountdown] = useState<number>(3);
+  const [progress, setProgress] = useState<MatchProgress>({ message: "", matchedCount: 0 });
+  const { currentUser, setCurrentRoom } = useAppContext();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setFoundPlayers([
-        { id: 1, name: "Player 1", rating: 1500, skillLevel: "beginner" },
-        { id: 2, name: "Player 2", rating: 1550, skillLevel: "beginner" },
-        { id: 3, name: "Player 3", rating: 1525, skillLevel: "beginner" },
-        { id: 4, name: "Player 4", rating: 1575, skillLevel: "beginner" },
-      ]);
-      setSearchState("found");
+    if (isSearchStarted) {
+      startSearch();
+    } else {
+      cancelSearch();
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      GameApi.cancelSearch();
+    };
+  }, [isSearchStarted]);
 
-      setTimeout(() => {
-        setSearchState("ready");
-      }, 2000);
-    }, 3000);
+  const startSearch = async () => {
+    setSearchState("searching");
+    try {
+      await GameApi.searchPlayers(gameSettings, {
+        onMatchFound: (data) => {
+          setCurrentRoom(data.room);
+          setFoundPlayers(data.matchedUsers || []);
+          setSearchState("found");
+          startMatchCountdown();
+        },
+        onMatchProgress: (data) => {
+          setProgress(data);
+        },
+        onError: (error) => {
+          console.error("Search error:", error);
+          setSearchState("error");
+        },
+      });
+    } catch (error) {
+      console.error("Failed to start search:", error);
+      setSearchState("error");
+    }
+  };
 
-    return () => clearTimeout(timer);
-  }, []);
+  const cancelSearch = async () => {
+    try {
+      await GameApi.cancelSearch();
+      setSearchState("idle");
+      setProgress({ message: "", matchedCount: 0 });
+    } catch (error) {
+      console.error("Failed to cancel search:", error);
+    }
+  };
+
+  const startMatchCountdown = () => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setSearchState("ready");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   const renderPlayerGrid = () => {
+    // Include current user in the display
+    const allPlayers = [currentUser, ...foundPlayers];
+
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 w-full">
-        {foundPlayers.map((player) => (
+        {allPlayers.map((player) => (
           <div
-            key={player.id}
+            key={player._id}
             className="flex flex-col items-center text-center"
           >
             <div className="relative inline-block">
@@ -48,8 +106,8 @@ const GameSearch: React.FC<{
                 }`}
               />
               <img
-                src="/icons/developer.png"
-                alt={player.name}
+                src={"/icons/developer.png"}
+                alt={player.username}
                 className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-full border-2 border-light-primary dark:border-dark-primary relative z-10 transition-transform duration-300 hover:scale-105"
               />
               {searchState === "ready" && (
@@ -59,10 +117,11 @@ const GameSearch: React.FC<{
               )}
             </div>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base font-medium text-light-foreground dark:text-dark-foreground">
-              {player.name}
+              {player.username}
+              {player._id === currentUser._id && " (You)"}
             </p>
             <p className="text-xs sm:text-sm text-light-secondary dark:text-dark-secondary">
-              Rating: {player.rating}
+              Rating: {player.rank}
             </p>
           </div>
         ))}
@@ -70,22 +129,51 @@ const GameSearch: React.FC<{
     );
   };
 
+  const getStatusMessage = () => {
+    switch (searchState) {
+      case "idle":
+        return {
+          title: "Ready to Search",
+          subtitle: "Preparing matchmaking...",
+        };
+      case "searching":
+        return {
+          title: "Searching for Opponents...",
+          subtitle: progress.message || "Looking for players with similar skill level",
+        };
+      case "found":
+        return {
+          title: "Players Found!",
+          subtitle: `Match starting in ${countdown}...`,
+        };
+      case "ready":
+        return {
+          title: "Get Ready to Code!",
+          subtitle: "Match is about to begin",
+        };
+      case "error":
+        return {
+          title: "No Players Found",
+          subtitle: "Couldn't find opponents with current settings",
+        };
+      default:
+        return { title: "", subtitle: "" };
+    }
+  };
+
+  const status = getStatusMessage();
+
   return (
     <div className="w-full">
-      <Card className="w-full bg-light-background dark:bg-dark-background border border-light-border dark:border-dark-border shadow-xl">
+      <Card className="w-full border border-light-border dark:border-dark-border shadow-xl">
         <CardContent className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
           {/* Search Status Header */}
-          <div className="text-center space-y-1 sm:space-y-2 md:mt-2 mt-6 ">
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-stix font-bold text-light-foreground dark:text-dark-foreground px-4 sm:px-6">
-              {searchState === "searching" && "Searching for Opponents..."}
-              {searchState === "found" && "Players Found!"}
-              {searchState === "ready" && "Get Ready to Code!"}
+          <div className="text-center space-y-1 sm:space-y-2 md:mt-2 mt-6">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-stix font-bold text-light-text-primary dark:text-dark-text-primary px-4 sm:px-6">
+              {status.title}
             </h2>
-            <p className="text-sm sm:text-base text-light-secondary dark:text-dark-secondary font-medium px-4 sm:px-6">
-              {searchState === "searching" &&
-                "Looking for players with similar skill level"}
-              {searchState === "found" && "Preparing match setup"}
-              {searchState === "ready" && "Match starting in 3..."}
+            <p className="text-sm sm:text-base text-light-text-secondary dark:text-dark-text-secondary font-medium px-4 sm:px-6">
+              {status.subtitle}
             </p>
           </div>
 
@@ -104,50 +192,38 @@ const GameSearch: React.FC<{
                   />
                   <div className="relative z-10 bg-light-background dark:bg-dark-background rounded-full p-2 sm:p-3 border-2 border-light-primary dark:border-dark-primary shadow-lg">
                     <img
-                      src="/icons/developer.png"
-                      alt="Developer"
+                      src={"/icons/developer.png"}
+                      alt="You"
                       className="w-24 h-24 rounded-full"
                     />
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="relative">
-                {renderPlayerGrid()}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  {searchState === "found" && (
-                    <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 text-light-primary dark:text-dark-primary animate-spin" />
-                  )}
-                  {searchState === "ready" && (
-                    <Users className="w-6 h-6 sm:w-8 sm:h-8 text-light-primary dark:text-dark-primary" />
-                  )}
+            ) : searchState === "error" ? (
+              <div className="flex flex-col items-center justify-center space-y-6">
+                <div className="relative">
+                  <div className="bg-light-background dark:bg-dark-background rounded-full p-2 sm:p-3 border-2 border-light-primary/50 dark:border-dark-primary/50 shadow-lg">
+                    <img
+                      src={"/icons/developer.png"}
+                      alt="You"
+                      className="w-24 h-24 rounded-full opacity-80"
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-red-500 rounded-full p-2 shadow-lg">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
                 </div>
+                <Button
+                  onClick={startSearch}
+                  variant="primary"
+                  className="mt-4"
+                >
+                  Try Again
+                </Button>
               </div>
+            ) : (
+              renderPlayerGrid()
             )}
-          </div>
-
-          {/* Match Details */}
-          <div className="bg-light-secondary/5 dark:bg-dark-secondary/5 rounded-xl p-3 sm:p-4 lg:p-6 border border-light-border dark:border-dark-border">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-              {[
-                { label: "Game Mode", value: gameMode },
-                { label: "Language", value: gameSettings.language },
-                { label: "Difficulty", value: gameSettings.difficultyLevel },
-                {
-                  label: "Time Limit",
-                  value: `${gameSettings.timeLimit} minutes`,
-                },
-              ].map((detail, index) => (
-                <div key={index} className="space-y-0.5 sm:space-y-1">
-                  <p className="text-xs sm:text-sm text-light-secondary dark:text-dark-secondary font-medium">
-                    {detail.label}
-                  </p>
-                  <p className="text-sm md:text-base font-stix font-medium text-light-foreground dark:text-dark-foreground capitalize">
-                    {detail.value}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
         </CardContent>
       </Card>

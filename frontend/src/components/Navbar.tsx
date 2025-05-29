@@ -19,32 +19,7 @@ const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   };
 
   return (
-    <nav
-      className="fixed px-4 top-0 left-0 w-full border-b border-light-border/20 dark:border-dark-border/20 shadow-lg z-50"
-      style={{
-        background: `
-          linear-gradient(135deg, 
-            #000E1D 0%,
-            #00172A 50%,
-            #002137 100%
-          ),
-          radial-gradient(
-            ellipse at 20% 30%,
-            rgba(0, 40, 80, 0.15) 0%,
-            transparent 40%
-          ),
-          radial-gradient(
-            ellipse at 80% 70%,
-            rgba(0, 30, 60, 0.1) 0%,
-            transparent 40%
-          ),
-          url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2IiBoZWlnaHQ9IjYiPgo8cmVjdCB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjMDAwMDAwIiBvcGFjaXR5PSIwLjA1Ij48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDZMNiAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9IiMwMDIxMzciIHN0cm9rZS13aWR0aD0iMC4yNSIgb3BhY2l0eT0iMC4xIi8+Cjwvc3ZnPg==')
-        `,
-        backgroundBlendMode: "overlay",
-        boxShadow: "inset 0 0 60px rgba(0, 15, 30, 0.6)",
-        backgroundAttachment: "fixed",
-      }}
-    >
+    <nav className="fixed px-4 top-0 left-0 w-full border-b border-light-border/20 dark:border-dark-border/20 shadow-lg z-50 backdrop-blur-lg bg-light-background/80 dark:bg-dark-background/80">
       <div className="w-full px-2 py-4 flex items-center justify-between">
         {/* Left side with mobile menu button and logo */}
         <div className="flex flex-row space-x-2 items-center">

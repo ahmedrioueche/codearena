@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "../../types/user";
-import { Room, RoomSettings } from "../../types/game/room";
+import { Room } from "../../types/game/room";
+import { GameSettings } from "../../types/game/game";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const roomAxios = axios.create({
@@ -17,9 +18,9 @@ interface RoomResponse {
 }
 
 export const RoomApi = {
-  createRoom: async (): Promise<RoomResponse> => {
+  createRoom: async (settings: GameSettings): Promise<RoomResponse> => {
     try {
-      const response = await roomAxios.post("/room/create");
+      const response = await roomAxios.post("/room/create", { settings });
       console.log("response in createRoom", response);
       return response.data;
     } catch (error: any) {
@@ -66,12 +67,26 @@ export const RoomApi = {
     }
   },
 
-  updateSettings: async (
+  updateRoomSettings: async (
     code: string,
-    settings: Partial<RoomSettings>
+    settings: Partial<GameSettings>
   ): Promise<Room> => {
     try {
       const response = await roomAxios.patch(`/room/${code}/settings`, {
+        settings,
+      });
+      return response.data.room;
+    } catch (error: any) {
+      throw error;
+    }
+  },
+
+  updateRoomGameSettings: async (
+    code: string,
+    settings: Partial<GameSettings>
+  ): Promise<Room> => {
+    try {
+      const response = await roomAxios.patch(`/room/${code}/game-settings`, {
         settings,
       });
       return response.data.room;
@@ -84,6 +99,14 @@ export const RoomApi = {
     console.log("code, userId", code, userId);
     try {
       await roomAxios.post("/room/leave", { code, userId });
+    } catch (error: any) {
+      throw error;
+    }
+  },
+
+  setPlayerReady: async (): Promise<void> => {
+    try {
+      await roomAxios.post("/room/ready");
     } catch (error: any) {
       throw error;
     }

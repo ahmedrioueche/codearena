@@ -63,7 +63,7 @@ const ConfigModeSelector = ({
               </h3>
             </div>
 
-            <p className="text-sm text-black/60 dark:text-white/60">
+            <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
               {option.description}
             </p>
           </div>

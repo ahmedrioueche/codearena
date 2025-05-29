@@ -11,5 +11,7 @@ router.delete('/close', authMiddleware, RoomController.closeRoom as any);
 router.delete('/remove-user', authMiddleware, RoomController.removeUser as any);
 router.patch('/:code/settings', authMiddleware, RoomController.updateSettings as any);
 router.post('/leave', authMiddleware, RoomController.leaveRoom as any);
+router.patch('/:code/game-settings', authMiddleware, RoomController.updateGameSettings as any);
+router.post('/ready', authMiddleware, RoomController.setPlayerReady as any);
 
 export default router;

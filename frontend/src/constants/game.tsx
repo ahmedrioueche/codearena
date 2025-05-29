@@ -1,6 +1,6 @@
 import { Flame, Shield, Trophy } from "lucide-react";
 import {
-  DifficultyLevelInterface,
+  DifficultyLevelI as DifficultyLevelI,
   ProgrammingLanguageI,
   SkillLevel,
   TimeLimit,
@@ -58,7 +58,7 @@ export const topics: Topic[] = [
   { id: "computer-visiton", name: "Computer vision" },
 ];
 
-export const difficultyLevels: DifficultyLevelInterface[] = [
+export const difficultyLevels: DifficultyLevelI[] = [
   {
     id: "easy",
     name: "Novice",
@@ -69,7 +69,7 @@ export const difficultyLevels: DifficultyLevelInterface[] = [
     id: "medium",
     name: "Adept",
     description: "Balanced challenge",
-    icon: <Flame className="w-5 h-5 text-yellow-500" />,
+    icon: <Flame className="w-5 h-5 text-blue-500" />,
   },
   {
     id: "hard",

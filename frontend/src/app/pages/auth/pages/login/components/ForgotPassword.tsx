@@ -5,6 +5,7 @@ import Otp from "../../../components/Otp";
 import { Loader2 } from "lucide-react";
 import { AxiosError } from "axios";
 import InputField from "../../../../../../components/ui/InputField";
+import { APP_DATA } from "../../../../../../constants/data";
 
 type ForgotPasswordView = "email" | "otp" | "reset";
 
@@ -68,12 +69,12 @@ const ForgotPassword = ({
             <div className="text-center mb-8">
               <div className="relative inline-block">
                 <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-dancing">
-                  CodeArena
+                  {APP_DATA.name}
                 </h1>
                 <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
               </div>
               <p className="text-blue-300 font-stix text-lg mt-4">
-                Where Code Meets the Cosmos
+                {APP_DATA.desc}
               </p>
             </div>
             <div className="text-center mb-8">

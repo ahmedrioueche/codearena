@@ -1,50 +1,39 @@
-import mongoose, { Schema, Types } from 'mongoose';
-import { GameModeEnum, CategoryEnum } from '../types/game';
-import { RoomSettings, IRoomDocument } from '../types/room';
+import mongoose, { Schema, Types, Document } from 'mongoose';
+import { IRoomDocument } from '../types/room';
+import { GameModeEnum, GameSettings } from '../types/game';
 
-const RoomSettingsSchema = new Schema<RoomSettings>({
-  mode: {
+const GameSettingsSchema = new Schema<GameSettings>({
+  gameMode: {
     type: String,
     enum: Object.values(GameModeEnum),
-    default: GameModeEnum.RANDOM,
     required: true,
   },
-  category: {
+  language: {
     type: String,
-    enum: Object.values(CategoryEnum),
-    default: CategoryEnum.ANIMAL,
     required: true,
   },
-  questionTime: {
+  maxPlayers: {
     type: Number,
-    min: 10,
-    max: 120,
-    default: 30,
+    required: false,
+  },
+  difficultyLevel: {
+    type: String,
+    enum: ['easy', 'medium', 'hard'] as const,
     required: true,
   },
-  RoundsPerMatch: {
+  teamSize: {
     type: Number,
-    min: 1,
-    max: 10,
-    default: 5,
-    required: true,
+    required: false,
   },
-});
-
-const MatchDataSchema = new Schema({
-  questions: [
-    {
-      type: Schema.Types.Mixed,
-      required: true,
-    },
-  ],
-  askedUsers: [
-    {
-      type: Types.ObjectId,
-      ref: 'User',
-      required: false,
-    },
-  ],
+  timeLimit: {
+    type: Number,
+    required: false,
+  },
+  topics: {
+    type: [String],
+    required: false,
+    default: [],
+  },
 });
 
 const roomSchema = new Schema<IRoomDocument>(
@@ -58,18 +47,17 @@ const roomSchema = new Schema<IRoomDocument>(
     },
     users: [
       {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
       },
     ],
     settings: {
-      type: RoomSettingsSchema,
+      type: GameSettingsSchema,
       required: true,
-      default: () => ({}),
     },
-
-    matchData: {
-      type: MatchDataSchema,
+    adminId: {
+      type: String,
       required: false,
     },
   },

@@ -2,74 +2,129 @@ import { Request, Response } from 'express';
 import { RoomModel } from '../models/room';
 import { UserModel } from '../models/user';
 import mongoose from 'mongoose';
-import { GameModeEnum, CategoryEnum } from '../types/game';
-import { IRoomDocument } from '../types/room';
+import { GameModeEnum, GameSettings } from '../types/game';
 import { pusher } from '../services/pusher';
 import { getRoomChannel } from '../services/pusher/channels';
 import { EVENTS } from '../constants/events';
 import { AuthenticatedRequest } from '../types/express';
-
+import { IUserDocument } from '../types/user';
 export class RoomController {
-  // 1. Create a room with settings
+  static createGameRoom = async (userIds: string[], settings: GameSettings) => {
+    // Validate all users
+    const users = await UserModel.find({ _id: { $in: userIds } });
+    if (users.length !== userIds.length) {
+      throw new Error('One or more users not found');
+    }
+
+    // Remove each user from existing rooms (if any)
+    for (const user of users) {
+      const existingRoom = await RoomModel.findOne({ users: user._id });
+      if (existingRoom) {
+        existingRoom.users = existingRoom.users.filter(
+          (u: mongoose.Types.ObjectId) => u.toString() !== user._id.toString(),
+        );
+        await existingRoom.save();
+
+        // Notify existing room about user leaving
+        await pusher.trigger(getRoomChannel(existingRoom.code), EVENTS.LEFT_ROOM, {
+          userId: user._id.toString(),
+        });
+      }
+    }
+
+    const code = Math.random().toString(36).substring(2, 8).toLowerCase();
+
+    // Create room with GameSettings
+    const room = await RoomModel.create({
+      code,
+      users: userIds,
+      settings: {
+        gameMode: settings.gameMode,
+        language: settings.language,
+        maxPlayers: settings.maxPlayers,
+        difficultyLevel: settings.difficultyLevel,
+        teamSize: settings.teamSize,
+        timeLimit: settings.timeLimit,
+        topics: settings.topics,
+      },
+      adminId: userIds[0],
+    });
+
+    return await RoomModel.findById(room._id).populate('users').lean();
+  };
+
   static createRoom = async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const settings = req.body?.settings || {
-        mode: GameModeEnum.RANDOM,
-        category: CategoryEnum.ANIMAL,
-        questionTime: 30,
-        RoundsPerMatch: 5,
-      };
-
       const user = await UserModel.findById(req?.user?.userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      const code = Math.random().toString(36).substring(2, 8).toLowerCase();
-
-      const room = await RoomModel.create({
-        code,
-        users: [user._id],
-        settings, // Use the settings from body or default
-      });
-
-      const populatedRoom = await RoomModel.findById(room._id).populate('users').lean();
+      const { settings } = req.body;
+      console.log({ settings });
+      const room = await RoomController.createGameRoom([user._id.toString()], settings);
 
       return res.status(201).json({
-        room: populatedRoom,
+        room,
         user,
       });
     } catch (error) {
       console.error('Create Room Error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : undefined,
+      });
     }
   };
 
-  // 2. Join a room
   static joinRoom = async (req: AuthenticatedRequest, res: Response) => {
     try {
       const user = await UserModel.findById(req?.user?.userId);
-
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
       const { code } = req.body;
-      console.log({ code });
       if (!code) {
-        return res.status(400).json({
-          error: 'Room code is required',
+        return res.status(400).json({ error: 'Room code is required' });
+      }
+
+      // Check if user is already in any room
+      const existingRoom = await RoomModel.findOne({ users: user._id });
+      if (existingRoom) {
+        // If trying to join same room, just return success
+        if (existingRoom.code === code) {
+          const populatedRoom = await RoomModel.findById(existingRoom._id).populate('users').lean();
+          return res.status(200).json({
+            room: populatedRoom,
+            user,
+          });
+        }
+
+        // Remove user from existing room
+        existingRoom.users = existingRoom.users.filter(
+          (u: mongoose.Types.ObjectId) => u.toString() !== user._id.toString(),
+        );
+        await existingRoom.save();
+
+        // Notify existing room about user leaving
+        await pusher.trigger(getRoomChannel(existingRoom.code), EVENTS.LEFT_ROOM, {
+          userId: user._id.toString(),
         });
       }
 
       const room = await RoomModel.findOne({ code });
-
       if (!room) {
         return res.status(404).json({ error: 'Room not found' });
       }
 
+      // Check if room is full
+      if (room.users.length >= (room.settings.maxPlayers || 10)) {
+        return res.status(400).json({ error: 'Room is full' });
+      }
+
       const userAlreadyInRoom = room.users.some(
-        (u: mongoose.Types.ObjectId) => u.toString() === user!._id.toString(),
+        (u: mongoose.Types.ObjectId) => u.toString() === user._id.toString(),
       );
 
       if (!userAlreadyInRoom) {
@@ -79,7 +134,6 @@ export class RoomController {
 
       const populatedRoom = await RoomModel.findById(room._id).populate('users').lean();
 
-      console.log({ room });
       await pusher.trigger(getRoomChannel(room.code), EVENTS.JOINED_ROOM, user);
 
       return res.status(200).json({
@@ -92,7 +146,6 @@ export class RoomController {
     }
   };
 
-  // 3. Get room details
   static getRoom = async (req: Request, res: Response) => {
     try {
       const { code } = req.params;
@@ -110,7 +163,6 @@ export class RoomController {
     }
   };
 
-  // 4. Update room settings
   static updateSettings = async (req: Request, res: Response) => {
     try {
       const { code } = req.params;
@@ -125,10 +177,6 @@ export class RoomController {
       // Validate settings
       if (settings.mode && !Object.values(GameModeEnum).includes(settings.mode)) {
         return res.status(400).json({ error: 'Invalid game mode' });
-      }
-
-      if (settings.category && !Object.values(CategoryEnum).includes(settings.category)) {
-        return res.status(400).json({ error: 'Invalid category' });
       }
 
       if (settings.roundTime && (settings.roundTime < 10 || settings.roundTime > 120)) {
@@ -160,7 +208,6 @@ export class RoomController {
     }
   };
 
-  // 5. Remove user from room
   static removeUser = async (req: Request, res: Response) => {
     try {
       const { username, code } = req.body;
@@ -233,105 +280,132 @@ export class RoomController {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      // Remove user from room's users array
-      const initialUserCount = room.users.length;
-      room.users = (room.users as mongoose.Types.ObjectId[]).filter(
-        (u) => u.toString() !== userId.toString(),
-      );
+      // Create new users array without the leaving user
+      const updatedUsers = room.users.filter((u: any) => u._id.toString() !== userId.toString());
 
-      // Check if leaving user was admin
+      // Check if the leaving user is the admin
       let newAdmin = null;
-      if (user.isAdmin && room.users.length > 0) {
-        // Assign admin to the next available user (first in array)
+      if (user.isAdmin && updatedUsers.length > 0) {
+        // Assign new admin to first remaining user
         const newAdminUser = await UserModel.findByIdAndUpdate(
-          room.users[0]._id,
+          updatedUsers[0]._id,
           { $set: { isAdmin: true } },
           { new: true },
         );
         newAdmin = newAdminUser;
+        room.adminId = newAdminUser?._id.toString()!;
       }
 
-      // Save the updated room
-      await room.save();
-
-      await UserModel.deleteOne({ _id: userId });
-
-      // Prepare Pusher notifications
-      const pusherNotifications = [pusher.trigger(getRoomChannel(code), EVENTS.LEFT_ROOM, user)];
-
-      // Add admin change notification if needed
-      if (newAdmin) {
-        pusherNotifications.push(
-          pusher.trigger(getRoomChannel(code), EVENTS.ADMIN_CHANGED, newAdmin),
-        );
-      }
-
-      // Send all notifications
-      await Promise.all(pusherNotifications);
-
-      // If room is empty after user left, delete it
-      if (initialUserCount > 0 && room.users.length === 0) {
-        await RoomModel.deleteOne({ code });
+      // If no users left, delete the room before saving
+      if (updatedUsers.length === 0) {
+        await RoomModel.deleteOne({ _id: room._id });
         return res.status(200).json({
           message: 'User left and room closed (no users remaining)',
           roomClosed: true,
         });
       }
 
+      // Update the room with the new users array and possibly new adminId
+      room.users = updatedUsers;
+      await room.save();
+
+      // Notify via Pusher
+      const pusherNotifications = [pusher.trigger(getRoomChannel(code), EVENTS.LEFT_ROOM, user)];
+      if (newAdmin) {
+        pusherNotifications.push(
+          pusher.trigger(getRoomChannel(code), EVENTS.ADMIN_CHANGED, newAdmin),
+        );
+      }
+      await Promise.all(pusherNotifications);
+
       return res.status(200).json({
         message: 'User left room successfully',
-        remainingUsers: room.users.length,
+        remainingUsers: updatedUsers.length,
         user,
         newAdmin,
         roomClosed: false,
       });
     } catch (error) {
       console.error('Leave Room Error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : undefined,
+      });
     }
   };
 
-  static resetAskedUsers = async (req: Request, res: Response) => {
+  static updateGameSettings = async (req: Request, res: Response) => {
     try {
-      const { code } = req.body;
+      const { code } = req.params;
+      const { settings } = req.body;
 
       const room = await RoomModel.findOne({ code });
+
       if (!room) {
         return res.status(404).json({ error: 'Room not found' });
       }
 
-      await this.updateMatchData(room);
+      // Ensure settings object exists on the room
+      if (!room.settings) {
+        room.settings = settings;
+      } else {
+        // Safely merge updates into existing settings
+        if (settings.gameMode !== undefined) room.settings.gameMode = settings.gameMode;
+        if (settings.language !== undefined) room.settings.language = settings.language;
+        if (settings.difficultyLevel !== undefined)
+          room.settings.difficultyLevel = settings.difficultyLevel;
+        if (settings.maxPlayers !== undefined) room.settings.maxPlayers = settings.maxPlayers;
+        if (settings.teamSize !== undefined) room.settings.teamSize = settings.teamSize;
+        if (settings.timeLimit !== undefined) room.settings.timeLimit = settings.timeLimit;
+        if (settings.topics !== undefined) room.settings.topics = settings.topics;
+      }
+
+      await pusher.trigger(getRoomChannel(code), EVENTS.SETTINGS_UPDATED, settings);
+      await room.save();
 
       return res.status(200).json({
-        message: 'Match data reset successfully',
-        room,
+        message: 'Game settings updated',
+        gameSettings: room.settings,
       });
     } catch (error) {
-      console.error('Reset Asked Users Error:', error);
+      console.error('Update Game Settings Error:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   };
 
-  /**
-   * Private method to update match data by resetting askedUsers array
-   * @param room The room document to update
-   */
-  private static async updateMatchData(room: IRoomDocument): Promise<void> {
-    if (!room.matchData) {
-      // Initialize matchData if it doesn't exist
-      room.matchData = {
-        questions: [],
-        askedUsers: [],
-      };
-    } else {
-      // Reset askedUsers array
-      room.matchData.askedUsers = [];
-    }
-    await room.save();
-  }
+  static setPlayerReady = async (req: Request, res: Response) => {
+    try {
+      const user = await UserModel.findById(req?.user?.userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
 
-  // Utility method to get a room with proper typing
-  private static async getRoomWithMatchData(code: string): Promise<IRoomDocument | null> {
-    return RoomModel.findOne({ code }).populate('users').populate('matchData.askedUsers').exec();
-  }
+      // Find the room and populate the users
+      const room = await RoomModel.findOne({ users: user._id }).populate<{
+        users: IUserDocument[];
+      }>('users');
+
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found for this user' });
+      }
+
+      // Check if all users are ready
+      const allReady = room.users.every((u) => u.playStatus === true);
+
+      // Trigger Pusher event to notify room about the status change
+      await pusher.trigger(getRoomChannel(room.code), EVENTS.PLAYER_READY, {
+        userId: user._id,
+        allReady: allReady,
+      });
+
+      return res.status(200).json({
+        message: 'Player status updated to ready',
+        user,
+        allReady,
+      });
+    } catch (error) {
+      console.error('Set Player Ready Error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 }

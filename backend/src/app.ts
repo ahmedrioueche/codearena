@@ -6,6 +6,7 @@ import { errorHandler, notFoundHandler } from './middlewares/error';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
 import roomRoutes from './routes/room';
+import gameRoutes from './routes/game';
 import { API_BASE_URL } from './constants/api';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
@@ -57,6 +58,7 @@ class App {
     this.app.use(`${API_BASE_URL}/auth`, authRoutes);
     this.app.use(`${API_BASE_URL}/user`, userRoutes);
     this.app.use(`${API_BASE_URL}/room`, roomRoutes);
+    this.app.use(`${API_BASE_URL}/game`, gameRoutes);
   }
 
   private setErrorHandlers(): void {

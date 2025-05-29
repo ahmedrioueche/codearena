@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
-import { MatchConfigI } from "../../types/game/game";
+import { GameSettings } from "../../types/game/game";
 
 const STORAGE_KEY = "match_config";
 
-const defaultConfig: MatchConfigI = {
+const defaultConfig: GameSettings = {
   gameMode: "solo",
   language: "javascript",
   topics: ["algorithms", "data structure"],
@@ -13,7 +13,7 @@ const defaultConfig: MatchConfigI = {
 
 export function useMatchConfig() {
   // Initialize state with data from localStorage or default values
-  const [matchConfig, setMatchConfig] = useState<MatchConfigI>(() => {
+  const [matchConfig, setMatchConfig] = useState<GameSettings>(() => {
     try {
       const storedConfig = localStorage.getItem(STORAGE_KEY);
       if (!storedConfig) return defaultConfig;
@@ -37,7 +37,7 @@ export function useMatchConfig() {
 
   // Save config to localStorage
   const saveConfig = useCallback(
-    (newConfig: Partial<MatchConfigI>) => {
+    (newConfig: Partial<GameSettings>) => {
       try {
         const updatedConfig = { ...matchConfig, ...newConfig };
 
@@ -90,7 +90,7 @@ export function useMatchConfig() {
 }
 
 // Type guard to validate MatchConfig structure
-function isValidMatchConfig(config: any): config is MatchConfigI {
+function isValidMatchConfig(config: any): config is GameSettings {
   return (
     typeof config === "object" &&
     config !== null &&

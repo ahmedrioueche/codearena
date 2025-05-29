@@ -20,6 +20,15 @@ import Tooltip, {
 import useScreen from "../../../../hooks/useScreen";
 import { GameMode } from "../../../../types/game/game";
 
+interface ButtonConfig {
+  id: string;
+  icon: React.ElementType;
+  action: () => void;
+  label: string;
+  primary: boolean;
+  hideOnModes?: GameMode[];
+}
+
 interface ControlsMenuProps {
   gameMode: GameMode;
   isCollapsed: boolean;
@@ -82,7 +91,7 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({
   }, [isOpenOnMobile]);
 
   const getButtons = () => {
-    const baseButtons = [
+    const baseButtons: ButtonConfig[] = [
       {
         id: "expand",
         icon: isMobile
@@ -95,6 +104,7 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({
         },
         label: isCollapsed ? (isMobile ? "Close" : "Expand") : "Close",
         primary: false,
+        hideOnModes: ["collab"]
       },
       {
         id: "timer",
@@ -158,6 +168,16 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({
         primary: false,
       },
       {
+        id: "players",
+        icon: Users,
+        action: () => {
+          onToggleComponent("players");
+        },
+        label: "Players",
+        primary: false,
+        hideOnModes: ["solo"]
+      },
+      {
         id: "new-problem",
         icon: Redo,
         action: () => {
@@ -168,22 +188,17 @@ const ControlsMenu: React.FC<ControlsMenuProps> = ({
       },
     ];
 
-    // Exclude the "Board" button on mobile
-    const filteredButtons = isMobile
-      ? baseButtons.filter((button) => button.id !== "board")
-      : baseButtons;
-
-    // Add "Players" button for battle mode
-    if (gameMode === "battle") {
-      filteredButtons.splice(4, 0, {
-        id: "players",
-        icon: Users,
-        action: () => {
-          // Handle battle
-        },
-        label: "Players",
-        primary: false,
-      });
+    // Filter buttons based on mobile and game mode
+    let filteredButtons = baseButtons;
+    
+    // Filter out buttons that should be hidden on current game mode
+    filteredButtons = filteredButtons.filter(
+      (button) => !button.hideOnModes?.includes(gameMode)
+    );
+    
+    // Filter out board button on mobile
+    if (isMobile) {
+      filteredButtons = filteredButtons.filter((button) => button.id !== "board");
     }
 
     return filteredButtons;

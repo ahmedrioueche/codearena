@@ -20,8 +20,8 @@ const config: Config = {
           border: "#FFFFFF10", // Light border opacity
           shadow: "#92E3A920", // Light shadow opacity
           text: {
-            primary: "",
-            secondary: "",
+            primary: "#000000",
+            secondary: "#00000099",
           },
         },
         dark: {
@@ -35,7 +35,7 @@ const config: Config = {
           shadow: "#4F46E520", // Using primary color with opacity for glow
           text: {
             primary: "#FFFFFF", // Pure white like form text
-            secondary: "#D1C4E9", // Light purple like secondary text
+            secondary: "#FFFFFF99",
           },
         },
       },
