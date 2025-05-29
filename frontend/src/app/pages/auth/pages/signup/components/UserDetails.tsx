@@ -5,6 +5,7 @@ import { ExperienceLevel, UserUpdate } from "../../../../../../types/user";
 import { Loader2 } from "lucide-react";
 import { capitalize } from "../../../../../../utils/helper";
 import InputField from "../../../../../../components/ui/InputField";
+import { APP_DATA } from "../../../../../../constants/data";
 
 interface UserDetailsProps {
   onSuccess: () => void;
@@ -45,18 +46,19 @@ const UserDetails = ({ onSuccess }: UserDetailsProps) => {
   };
 
   return (
-    <div className="bg-black/40 backdrop-blur-xl p-12 rounded-3xl border border-white/10 shadow-2xl">
+    <div
+      style={{ zoom: "92%" }}
+      className="bg-black/40 backdrop-blur-xl p-12 rounded-3xl border border-white/10 shadow-2xl"
+    >
       {/* Logo */}
       <div className="text-center mb-8">
         <div className="relative inline-block">
           <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-dancing">
-            CodeArena
+            {APP_DATA.name}
           </h1>
           <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
         </div>
-        <p className="text-blue-300 font-stix text-lg mt-4">
-          Complete Your Profile
-        </p>
+        <p className="text-blue-300 font-stix text-lg mt-4">{APP_DATA.desc}</p>
       </div>
 
       {/* User Details Form */}

@@ -1,29 +1,33 @@
 import React from "react";
-
+import { Rank } from "../../../../../types/user";
 interface PlayerCardProps {
   name: string;
   avatar: string;
-  rating: number;
-  skillLevel: "beginner" | "junior" | "intermediate" | "senior";
+  rank: Rank;
+  score: number;
+  accuracy: number;
+  wins: number;
   onClick: () => void;
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({
   name,
   avatar,
-  skillLevel,
+  rank,
   onClick,
 }) => {
-  const getSkillLevelColor = (level: string) => {
+  const getSkillLevelColor = (level: Rank) => {
     switch (level) {
-      case "beginner":
+      case "noob":
         return "text-green-500";
-      case "junior":
+      case "not_bad":
         return "text-blue-500";
-      case "intermediate":
+      case "good":
         return "text-purple-500";
-      case "senior":
+      case "pro":
         return "text-orange-500";
+      case "legend":
+        return "text-yellow-500";
       default:
         return "text-gray-500";
     }
@@ -52,8 +56,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         <span className="font-semibold text-sm text-center truncate max-w-full text-light-foreground dark:text-dark-foreground">
           {name}
         </span>
-        <span className={`text-xs mt-1 ${getSkillLevelColor(skillLevel)}`}>
-          {capitalizeFirstLetter(skillLevel)}
+        <span className={`text-xs mt-1 ${getSkillLevelColor(rank)}`}>
+          {capitalizeFirstLetter(rank.replace("_", " "))}
         </span>
       </div>
     </div>

@@ -40,7 +40,7 @@ export const useProblem = () => {
 
   // Function to manually fetch a problem
   const getProblem = async (
-    topic: string,
+    topics: string,
     language: string,
     difficulty: DifficultyLevel
   ) => {
@@ -53,7 +53,7 @@ export const useProblem = () => {
 
       // Fetch a new problem, excluding the ones in the list
       const fetchedProblem = await fetchProblemFromAPI(
-        topic,
+        topics,
         language,
         difficulty,
         excludedProblems

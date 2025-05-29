@@ -55,7 +55,7 @@ function PlayersConfig({
           <label className="block text-sm font-medium mb-2 text-light-foreground dark:text-dark-foreground">
             Max Players
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
             {maxPlayersOptions.map((num) => (
               <button
                 key={num}

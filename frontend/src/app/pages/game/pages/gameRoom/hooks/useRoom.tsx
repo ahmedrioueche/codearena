@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { RoomApi } from "../../../../../../api/game/room";
 import { APP_PAGES } from "../../../../../../constants/navigation";
 import { useAppContext } from "../../../../../../context/AppContext";
-import { Room } from "../../../../../../types/game/room";
 import { User } from "../../../../../../types/user";
+import { GameSettings } from "../../../../../../types/game/game";
 
 export const useRoomValidation = () => {
   const { currentUser, currentRoom, setCurrentRoom } = useAppContext();
@@ -31,17 +31,16 @@ export const useRoomValidation = () => {
       window.location.href = APP_PAGES.home.route;
       return false;
     }
-  }, [currentUser, currentRoom, setCurrentRoom]);
+  }, [currentUser]);
 
   return { validateRoom };
 };
 
 export const useRoomData = () => {
-  const { currentRoom, currentUser } = useAppContext();
+  const { currentRoom, currentUser, setCurrentRoom } = useAppContext();
   const [users, setUsers] = useState<User[]>([]);
   const [isAsker, setIsAsker] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [room, setRoom] = useState<Room | null>(null);
 
   const fetchUpdatedRoom = useCallback(async () => {
     if (!currentRoom?.code) return null;
@@ -49,7 +48,7 @@ export const useRoomData = () => {
     try {
       setIsLoading(true);
       const updatedRoom = await RoomApi.getRoom(currentRoom.code);
-      setRoom(updatedRoom);
+      setCurrentRoom(updatedRoom);
       setUsers(updatedRoom?.users || []);
       setIsAsker(currentUser?._id === updatedRoom?.users?.[0]?._id);
       return updatedRoom;
@@ -59,20 +58,64 @@ export const useRoomData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentRoom?.code, currentUser?._id]);
+  }, [currentUser?._id]);
 
-  const addUser = useCallback((newUser: User) => {
-    setUsers((prevUsers) => {
-      if (!prevUsers.some((user) => user._id === newUser._id)) {
-        return [...prevUsers, newUser];
-      }
-      return prevUsers;
-    });
-  }, []);
+  const addUser = useCallback(
+    (newUser: User) => {
+      setUsers((prevUsers) => {
+        if (!prevUsers.some((user) => user._id === newUser._id)) {
+          const updatedUsers = [...prevUsers, newUser];
+          // Update currentRoom with the new users list
+          setCurrentRoom((prevRoom) => {
+            if (!prevRoom) return prevRoom;
+            return {
+              ...prevRoom,
+              users: updatedUsers,
+            };
+          });
+          return updatedUsers;
+        }
+        return prevUsers;
+      });
+    },
+    [setCurrentRoom]
+  );
 
-  const removeUser = useCallback((userId: string) => {
-    setUsers((prev) => prev.filter((u) => u._id !== userId));
-  }, []);
+  const removeUser = useCallback(
+    (userId: string) => {
+      setUsers((prev) => {
+        const updatedUsers = prev.filter((u) => u._id !== userId);
+        // Update currentRoom with the updated users list
+        setCurrentRoom((prevRoom) => {
+          if (!prevRoom) return prevRoom;
+          return {
+            ...prevRoom,
+            users: updatedUsers,
+          };
+        });
+        return updatedUsers;
+      });
+    },
+    [setCurrentRoom]
+  );
+
+  const updateGameSettings = useCallback(
+    (settings: Partial<GameSettings>) => {
+      setCurrentRoom((prevRoom) => {
+        if (!prevRoom) return prevRoom;
+        return {
+          ...prevRoom,
+          settings: {
+            ...prevRoom.settings,
+            ...settings,
+          },
+        };
+      });
+
+      return currentRoom?.settings;
+    },
+    [setCurrentRoom, currentRoom]
+  );
 
   const leaveRoom = useCallback(async () => {
     if (!currentRoom?.code || !currentUser?._id) return;
@@ -83,29 +126,64 @@ export const useRoomData = () => {
     }
   }, [currentRoom?.code, currentUser?._id]);
 
+  // Add to your useRoomData hook
+  const setPlayerReady = useCallback(
+    async (userId: string) => {
+      if (!currentRoom?.code || !currentUser?._id) return;
+
+      try {
+        // Optimistic UI update
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === userId ? { ...user, playStatus: "ready" } : user
+          )
+        );
+
+        // Update currentRoom state
+        setCurrentRoom((prevRoom) => {
+          if (!prevRoom) return prevRoom;
+          return {
+            ...prevRoom,
+            users: prevRoom.users.map((user) =>
+              user._id === userId ? { ...user, playStatus: "ready" } : user
+            ),
+          };
+        });
+      } catch (error) {
+        console.error("Error setting player ready status:", error);
+        // Revert optimistic update if needed
+        await fetchUpdatedRoom();
+      }
+    },
+    [currentRoom?.code, currentUser?._id, fetchUpdatedRoom, setCurrentRoom]
+  );
+
   useEffect(() => {
     const fetchRoomData = async () => {
       const updatedRoom = await fetchUpdatedRoom();
       if (!updatedRoom && currentRoom) {
-        setUsers(currentRoom.users || []);
+        setUsers(currentRoom.users || [currentUser]);
         setIsAsker(currentUser?._id === currentRoom.users?.[0]?._id);
       }
     };
 
     fetchRoomData();
-  }, [currentRoom, currentUser, fetchUpdatedRoom]);
+  }, [currentUser]);
 
   return {
     users,
     isAsker,
     isLoading,
-    room,
     addUser,
     removeUser,
+    currentRoom,
+    updateGameSettings,
+    setCurrentRoom,
     setUsers,
     setIsAsker,
     fetchUpdatedRoom,
     leaveRoom,
+    setPlayerReady,
   };
 };
 

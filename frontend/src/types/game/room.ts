@@ -1,19 +1,12 @@
 import { User } from "../user";
-import { GameMode } from "./game";
-
-export interface RoomSettings {
-  gameMode: GameMode;
-  roomName: string;
-  maxPlayers: number;
-  teamSize: number;
-  roomCode: string;
-}
+import { GameSettings } from "./game";
 
 export interface Room {
   _id: string;
   code: string;
   users: User[];
-  settings: RoomSettings;
+  settings: GameSettings;
+  adminId: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -2,12 +2,14 @@ import { useState } from "react";
 import Navbar from "../../../components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { Outlet, useMatchRoute } from "@tanstack/react-router";
-import HomePage from "./pages/home/pages/Home";
+import HomePage from "./pages/home/pages/HomePage";
+import useScreen from "../../../hooks/useScreen";
 
 const MainPage = () => {
   const matchRoute = useMatchRoute();
   const isRoot = matchRoute({ to: "/" });
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const { isMobile } = useScreen();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isMobile);
 
   return (
     <div className="relative min-h-screen font-stix">

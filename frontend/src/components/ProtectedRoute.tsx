@@ -39,7 +39,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
         ...(params.has("difficultyLevel") && {
           difficultyLevel: params.get("difficultyLevel")! as DifficultyLevel,
         }),
-        ...(params.has("timeLimit") && { timeLimit: params.get("timeLimit")! }),
+        ...(params.has("timeLimit") && { timeLimit: parseInt(params.get("timeLimit")!) }),
         ...(params.has("topics") && {
           topics: params.get("topics")!.split(","),
         }),

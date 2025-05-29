@@ -4,7 +4,7 @@ import RadioGroup from "../../../../../../../components/ui/RadioGroup";
 import {
   DifficultyLevel,
   GameMode,
-  MatchConfigI,
+  GameSettings,
 } from "../../../../../../../types/game/game";
 import {
   difficultyLevels,
@@ -17,12 +17,14 @@ import { useMatchConfig } from "../../../../../../hooks/useMatchConfig";
 function MatchConfig({
   gameMode,
   isGameStarted,
+  onChange,
 }: {
   gameMode: GameMode;
   isGameStarted?: boolean;
+  onChange?: (settings: GameSettings) => void;
 }) {
   const { matchConfig } = useMatchConfig();
-  const [newMatchConfig, setNewMatchConfig] = useState<MatchConfigI>({
+  const [newMatchConfig, setNewMatchConfig] = useState<GameSettings>({
     gameMode: gameMode,
     language: matchConfig?.language || "javascript",
     topics: matchConfig?.topics || topics.filter((t) => t.id === "algorithms"),
@@ -44,6 +46,10 @@ function MatchConfig({
       timeLimit: selectedTime,
     });
   }, [isGameStarted]);
+
+  useEffect(() => {
+    onChange ? onChange(newMatchConfig) : null;
+  }, [newMatchConfig]);
 
   return (
     <div className="space-y-8">

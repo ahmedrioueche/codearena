@@ -10,7 +10,8 @@ interface RadioGroupProps {
   value: string;
   onChange: (value: string) => void;
   name: string;
-  classname?: string;
+  className?: string;
+  disabled?: boolean;
 }
 
 const RadioGroup: React.FC<RadioGroupProps> = ({
@@ -18,11 +19,14 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   value,
   onChange,
   name,
-  classname,
+  className,
+  disabled,
 }) => {
   return (
     <div
-      className={`grid gap-4 ${classname}`}
+      className={`grid gap-4 ${className} ${
+        disabled ? "opacity-70 pointer-events-none" : ""
+      }`}
       style={{
         gridTemplateColumns: `repeat(auto-fit, minmax(${
           options[0]?.description ? "200px" : "100px"
@@ -32,10 +36,14 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
       {options.map((option) => (
         <label
           key={option.id}
-          className={`relative flex flex-col p-4 cursor-pointer rounded-xl border-2 transition-all duration-200 ${
+          className={`relative flex flex-col p-4 rounded-xl border-2 transition-all duration-200 ${
             value === option.id
               ? "border-light-primary dark:border-dark-primary bg-light-primary/5 dark:bg-dark-primary/10"
-              : "border-light-border dark:border-dark-border hover:border-light-primary/50 dark:hover:border-dark-primary/50"
+              : "border-light-border dark:border-dark-border"
+          } ${
+            !disabled
+              ? "cursor-pointer hover:border-light-primary/50 dark:hover:border-dark-primary/50"
+              : ""
           }`}
         >
           <input
@@ -43,17 +51,34 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
             name={name}
             value={option.id}
             checked={value === option.id}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => !disabled && onChange(e.target.value)}
             className="sr-only"
+            disabled={disabled}
           />
           <div className="flex items-center space-x-3">
-            {option.icon}
+            {option.icon && (
+              <span className={disabled ? "opacity-70" : ""}>
+                {option.icon}
+              </span>
+            )}
             <div>
-              <p className="font-medium text-light-foreground dark:text-dark-foreground">
+              <p
+                className={`font-medium ${
+                  disabled
+                    ? "text-light-foreground/70 dark:text-dark-foreground/70"
+                    : "text-light-foreground dark:text-dark-foreground"
+                }`}
+              >
                 {option.label}
               </p>
               {option.description && (
-                <p className="text-sm text-gray-700 dark:text-gray-300">
+                <p
+                  className={`text-sm ${
+                    disabled
+                      ? "text-gray-500 dark:text-gray-400"
+                      : "text-gray-700 dark:text-gray-300"
+                  }`}
+                >
                   {option.description}
                 </p>
               )}

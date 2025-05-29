@@ -9,13 +9,23 @@ import { useRealtime } from "../../../hooks/useRealTime";
 import { EVENTS } from "../../../../../../constants/events";
 import toast from "react-hot-toast";
 import { User } from "../../../../../../types/user";
+import { GameSettings } from "../../../../../../types/game/game";
+import { RoomApi } from "../../../../../../api/game/room";
 
 function RoomPage() {
   settingsActions.setTheme("dark");
-  const { currentUser, currentRoom } = useAppContext();
+  const { currentUser } = useAppContext();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { isMobile } = useScreen();
-  const { users, validateRoom, addUser, removeUser } = useRoom();
+  const {
+    currentRoom,
+    validateRoom,
+    addUser,
+    removeUser,
+    updateGameSettings,
+    setPlayerReady,
+    leaveRoom,
+  } = useRoom();
 
   useEffect(() => {
     validateRoom();
@@ -23,25 +33,60 @@ function RoomPage() {
 
   useRealtime({
     channelName: `room-${currentRoom.code}`,
-    eventName: EVENTS.JOINED_ROOM,
-    onEvent: (user: User) => {
-      console.log("Received data:", user);
-      if (user.username !== currentUser.username)
-        toast.success(`${user.username} just joined!`);
-      addUser(user);
-    },
+    events: {
+      [EVENTS.JOINED_ROOM]: (user: User) => {
+        if (user.username !== currentUser.username) {
+          toast.success(`${user.username} just joined!`);
+          addUser(user);
+        }
+      },
+      [EVENTS.LEFT_ROOM]: (user: User) => {
+        if (user.username !== currentUser.username) {
+          toast.error(`${user.username} left`);
+          removeUser(user._id);
+        }
+      },
+      [EVENTS.SETTINGS_UPDATED]: (settings: GameSettings) => {
+        if (currentRoom.adminId !== currentUser._id) {
+          updateGameSettings(settings);
+        }
+      },
+      [EVENTS.PLAYER_READY]: (data: { userId: string }) => {
+        const user = currentRoom.users.find(u => u._id === data.userId);
+        setPlayerReady(data.userId);
+        if (data.userId !== currentUser._id && user) {
+          toast.success(`${user.username} is ready!`);
+        }
+      }
+    }
   });
+  
+  const handleSettingsChange = async (settings: GameSettings) => {
+    await RoomApi.updateRoomGameSettings(currentRoom.code, settings);
+  };
 
-  useRealtime({
-    channelName: `room-${currentRoom.code}`,
-    eventName: EVENTS.LEFT_ROOM,
-    onEvent: (user: User) => {
-      console.log("Received data:", user);
-      if (user.username !== currentUser.username)
-        toast.error(`${user.username} left`);
-      removeUser(user._id);
-    },
-  });
+  useEffect(() => {
+    let isUnmounted = false;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!isUnmounted) {
+        leaveRoom();
+
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      isUnmounted = true;
+      // For normal navigation (not tab closing)
+      if (!isUnmounted && currentRoom?.code && currentUser?._id) {
+        leaveRoom();
+      }
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [currentRoom.code, currentUser._id, leaveRoom]);
 
   return (
     <div
@@ -49,23 +94,21 @@ function RoomPage() {
         isMobile ? "mt-4" : ""
       } bg-light-background dark:bg-dark-background min-h-screen flex`}
     >
-      <RoomSettings isOpen={isSettingsOpen} setIsOpen={setIsSettingsOpen} />
+      <RoomSettings
+        room={currentRoom}
+        isOpen={isSettingsOpen}
+        setIsOpen={setIsSettingsOpen}
+        onChange={handleSettingsChange}
+      />
 
-      {/* Main Content Section */}
       <div
         className={`flex flex-1 flex-col ${isMobile ? "p-2" : "p-4"} pt-16 ${
           isMobile ? "" : "ml-[25%]"
         }`}
         style={{ zoom: 0.9 }}
       >
-        {" "}
-        {/* lg:ml-80 accounts for the width of RoomSettings on larger screens */}
         <div className="flex flex-1 flex-col lg:flex-row">
-          {/* Mobile: Room Settings Button and Room ID */}
           <div className="lg:hidden p-4 space-y-4 relative z-0">
-            {" "}
-            {/* Added z-0 */}
-            {/* Room Settings Button */}
             <button
               onClick={() => setIsSettingsOpen(!isSettingsOpen)}
               className="w-full p-3 bg-light-primary dark:bg-dark-primary text-white rounded-lg hover:opacity-90 transition-opacity relative z-0"
@@ -74,9 +117,8 @@ function RoomPage() {
             </button>
           </div>
 
-          {/* Centered Main Section */}
           <div className="flex-1 flex justify-center items-center">
-            <RoomMain room={currentRoom} users={users} />
+            <RoomMain room={currentRoom} />
           </div>
         </div>
       </div>

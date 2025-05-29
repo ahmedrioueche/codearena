@@ -1,38 +1,41 @@
 import PlayersConfig from "./PlayersConfig";
 import GameSearch from "./GameSearch";
-import { GameMode, GameSettings } from "../../../../../../../types/game/game";
+import { GameSettings } from "../../../../../../../types/game/game";
 import MatchConfig from "./MatchConfig";
 
 function QuickMatch({
-  gameMode,
+  gameSettings,
   isSearchStarted,
+  onChange,
 }: {
-  gameMode: GameMode;
+  gameSettings: GameSettings;
   isSearchStarted: boolean;
+  onChange: (settings: GameSettings) => void;
 }) {
-  const gameSettings: GameSettings = {
-    language: "javascript",
-    difficultyLevel: "medium",
-    timeLimit: "30",
-    topics: ["data_structure", "algorithms"],
-    maxPlayers: "",
-    teamSize: "",
-  };
-
   return (
     <div>
       {!isSearchStarted ? (
         <div>
           <div className="mt-4">
-            <PlayersConfig gameMode={gameMode} configMode="create" />
+            <PlayersConfig
+              gameMode={gameSettings.gameMode!}
+              configMode="create"
+            />
           </div>
           <div className="mt-8">
-            <MatchConfig gameMode={gameMode} />
+            <MatchConfig
+              gameMode={gameSettings.gameMode!}
+              onChange={onChange}
+            />
           </div>
         </div>
       ) : (
         <div>
-          <GameSearch gameMode={gameMode} gameSettings={gameSettings} />
+          <GameSearch
+            gameMode={gameSettings.gameMode!}
+            gameSettings={gameSettings}
+            isSearchStarted={isSearchStarted}
+          />
         </div>
       )}
     </div>

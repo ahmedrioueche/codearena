@@ -5,4 +5,6 @@ export const EVENTS = {
   JOINED_ROOM: "joined-room",
   LEFT_ROOM: "left-room",
   ADMIN_CHANGED: "admin-changed",
+  SETTINGS_UPDATED: "settings-updated",
+  PLAYER_READY: "player-ready",
 };

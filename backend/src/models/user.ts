@@ -48,6 +48,10 @@ const userSchema = new Schema<IUserDocument>(
       required: false,
       unique: false,
     },
+    playStatus: {
+      type: Boolean,
+      required: false,
+    },
     refreshTokens: {
       type: [String],
       select: false,

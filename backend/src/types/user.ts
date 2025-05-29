@@ -10,6 +10,7 @@ export interface IUser {
   isAdmin: boolean;
   age: number;
   experienceLevel: ExperienceLevel;
+  playStatus: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   refreshTokens: string[];
