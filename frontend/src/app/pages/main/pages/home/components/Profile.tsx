@@ -50,23 +50,7 @@ const Profile = () => {
   const rankClass = rankColors[userRank] || rankColors["Noob"];
 
   return (
-    <div className="relative group perspective-1000 h-full">
-      {/* Enhanced Animated Background */}
-      <div className="absolute inset-0 rounded-2xl overflow-hidden">
-        <div
-          className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900/80 to-indigo-900/80"
-          style={{
-            backgroundSize: "200% 200%",
-            animation: "gradientShift 8s ease infinite",
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-15 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"
-          style={{
-            mixBlendMode: "overlay",
-          }}
-        />
-      </div>
+    <div className="dark:bg-dark-secondary border border-light-border dark:border-dark-border  rounded-3xl relative group perspective-1000 h-full">
       {/* Main Card Content */}
       <div className="relative h-full p-6 md:p-8 rounded-2xl backdrop-blur-sm border border-white/20 overflow-hidden">
         {/* Profile Header */}
