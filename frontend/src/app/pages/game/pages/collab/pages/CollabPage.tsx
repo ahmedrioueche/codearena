@@ -6,9 +6,7 @@ import {
   Suspense,
   lazy,
 } from "react";
-import { APP_PAGES } from "../../../../../../constants/navigation";
 import { useAppContext } from "../../../../../../context/AppContext";
-import { router } from "../../../../../../routers";
 import Problem from "../../../components/Problem";
 import CodeEditor from "../../../components/CodeEditor";
 import ControlsMenu from "../../../components/ControlsMenu";
