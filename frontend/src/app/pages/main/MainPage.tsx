@@ -52,10 +52,12 @@ const MainPage = () => {
         {/* Main Layout */}
         <div className="mt-24 flex w-full">
           {/* Floating Sidebar will position itself absolutely */}
-          <Sidebar
-            isCollapsed={isSidebarCollapsed}
-            onClose={() => setIsSidebarCollapsed(false)}
-          />
+          {!isSidebarCollapsed && (
+            <Sidebar
+              isCollapsed={isSidebarCollapsed}
+              onClose={() => setIsSidebarCollapsed(false)}
+            />
+          )}
 
           {/* Center Content with proper spacing */}
           <div
