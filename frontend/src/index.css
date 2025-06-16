@@ -92,8 +92,8 @@ body {
 
 /* Dark Mode */
 .dark {
-  --scrollbar-track: #0d1117; /* Change to match your dark bg */
-  --scrollbar-thumb: #452fab; /* Adjust for dark mode */
+  --scrollbar-track: #0d1117;
+  --scrollbar-thumb: #452fab;
 }
 
 /* Scrollbar Styling */
