@@ -1,15 +1,16 @@
-import express, { Application } from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express, { Application } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { errorHandler, notFoundHandler } from './middlewares/error';
-import authRoutes from './routes/auth';
-import userRoutes from './routes/user';
-import roomRoutes from './routes/room';
-import gameRoutes from './routes/game';
 import { API_BASE_URL } from './constants/api';
-import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
+import { errorHandler, notFoundHandler } from './middlewares/error';
+import appRoutes from './routes/app';
+import authRoutes from './routes/auth';
+import gameRoutes from './routes/game';
+import roomRoutes from './routes/room';
+import userRoutes from './routes/user';
 dotenv.config();
 
 class App {
@@ -59,6 +60,7 @@ class App {
     this.app.use(`${API_BASE_URL}/user`, userRoutes);
     this.app.use(`${API_BASE_URL}/room`, roomRoutes);
     this.app.use(`${API_BASE_URL}/game`, gameRoutes);
+    this.app.use(`${API_BASE_URL}/`, appRoutes);
   }
 
   private setErrorHandlers(): void {

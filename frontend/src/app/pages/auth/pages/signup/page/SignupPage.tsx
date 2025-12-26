@@ -1,20 +1,16 @@
 import { useState } from "react";
-import Signup from "../components/Signup";
-import EmailVerification from "../components/EmailVerification";
-import UserDetails from "../components/UserDetails";
-import { UserCreate } from "../../../../../../types/user";
-import { APP_PAGES } from "../../../../../../constants/navigation";
 import toast from "react-hot-toast";
 import { asteroids, stars } from "../../../../../../constants/general";
+import { APP_PAGES } from "../../../../../../constants/navigation";
 import { handleRedirect } from "../../../../../../utils/helper";
+import Signup from "../components/Signup";
+import UserDetails from "../components/UserDetails";
 type View = "signup" | "emailVerification" | "userDetails";
 
 const SignupPage = () => {
   const [currentView, setCurrentView] = useState<View>("signup");
-  const [user, setUser] = useState<UserCreate>();
 
-  const handleNavigation = (view: View, data?: UserCreate) => {
-    if (data) setUser(data);
+  const handleNavigation = (view: View) => {
     setCurrentView(view);
   };
 
@@ -27,23 +23,11 @@ const SignupPage = () => {
   const renderView = () => {
     switch (currentView) {
       case "signup":
-        return (
-          <Signup
-            onSuccess={(data) => handleNavigation("emailVerification", data)}
-          />
-        );
-      case "emailVerification":
-        return (
-          <EmailVerification
-            email={user?.email || ""}
-            onSuccess={() => handleNavigation("userDetails")}
-            onBack={() => handleNavigation("signup")}
-          />
-        );
+        return <Signup onSuccess={() => handleNavigation("userDetails")} />;
       case "userDetails":
         return <UserDetails onSuccess={handleSuccess} />;
       default:
-        return <Signup onSuccess={(data) => setUser(data)} />;
+        return <Signup onSuccess={() => handleNavigation("userDetails")} />;
     }
   };
 

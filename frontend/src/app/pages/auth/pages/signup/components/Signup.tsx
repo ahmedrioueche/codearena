@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { UserCreate } from "../../../../../../types/user";
-import { sendOtp, signup } from "../../../../../../api/auth";
+import {  signup } from "../../../../../../api/auth";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import InputField from "../../../../../../components/ui/InputField";
@@ -65,48 +65,15 @@ const Signup = ({ onSuccess }: SignupProps) => {
         };
 
         await signup(data);
-        await sendOtp(data.email);
         onSuccess(data);
       } catch (err) {
         const axiosError = err as AxiosError<{ message?: string }>;
         const status = axiosError.response?.status;
-        const responseMessage = axiosError.response?.data?.message;
 
         let errorMessage = "Error submitting form. Please try again.";
 
         if (status === 400) {
-          if (responseMessage?.includes("Email already in use")) {
-            errorMessage = "Email already in use.";
-          } else if (
-            responseMessage?.includes("E11000") ||
-            responseMessage?.includes("duplicate key")
-          ) {
-            if (responseMessage.includes("username")) {
-              errorMessage =
-                "Username already in use. Please choose a different one.";
-            } else if (responseMessage.includes("email")) {
-              errorMessage = "Email already exists.";
-            }
-          } else {
-            errorMessage = "Invalid request. Please check your input.";
-          }
-        } else if (status === 401) {
-          errorMessage = "Unauthorized. Please check your credentials.";
-        } else if (status === 403) {
-          errorMessage =
-            "Forbidden. You don't have permission for this action.";
-        } else if (status === 404) {
-          errorMessage = "Resource not found.";
-        } else if (status === 409) {
-          errorMessage = "Conflict. The resource already exists.";
-        } else if (status === 429) {
-          errorMessage = "Too many requests. Please try again later.";
-        } else if (status === 500) {
-          errorMessage = "Server error. Please try again later.";
-        } else if (responseMessage) {
-          errorMessage = responseMessage;
-        }
-
+         
         setError(errorMessage);
       }
     }
