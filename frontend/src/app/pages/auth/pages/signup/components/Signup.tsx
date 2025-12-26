@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { UserCreate } from "../../../../../../types/user";
-import {  signup } from "../../../../../../api/auth";
-import { AxiosError } from "axios";
-import { Loader2 } from "lucide-react";
-import InputField from "../../../../../../components/ui/InputField";
 import { useLocation } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { signup } from "../../../../../../api/auth";
+import InputField from "../../../../../../components/ui/InputField";
 import { APP_DATA } from "../../../../../../constants/data";
+import { UserCreate } from "../../../../../../types/user";
 
 interface SignupProps {
   onSuccess: (data: UserCreate) => void;
@@ -67,13 +66,7 @@ const Signup = ({ onSuccess }: SignupProps) => {
         await signup(data);
         onSuccess(data);
       } catch (err) {
-        const axiosError = err as AxiosError<{ message?: string }>;
-        const status = axiosError.response?.status;
-
         let errorMessage = "Error submitting form. Please try again.";
-
-        if (status === 400) {
-         
         setError(errorMessage);
       }
     }
