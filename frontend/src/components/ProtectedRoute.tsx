@@ -1,11 +1,11 @@
-import { Navigate, useLocation, useNavigate } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { FC, ReactNode, useEffect, useState } from "react";
-import { getUser } from "../api/user";
-import { useAppContext } from "../context/AppContext";
-import LoadingScreen from "./LoadingPage";
 import { refreshToken } from "../api/auth";
+import { getUser } from "../api/user";
 import { useMatchConfig } from "../app/hooks/useMatchConfig";
+import { useAppContext } from "../context/AppContext";
 import { DifficultyLevel, GameMode } from "../types/game/game";
+import LoadingScreen from "./LoadingPage";
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -39,7 +39,9 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
         ...(params.has("difficultyLevel") && {
           difficultyLevel: params.get("difficultyLevel")! as DifficultyLevel,
         }),
-        ...(params.has("timeLimit") && { timeLimit: parseInt(params.get("timeLimit")!) }),
+        ...(params.has("timeLimit") && {
+          timeLimit: parseInt(params.get("timeLimit")!),
+        }),
         ...(params.has("topics") && {
           topics: params.get("topics")!.split(","),
         }),
@@ -100,10 +102,6 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
       setShouldRedirect(false);
     }
   }, [shouldRedirect, redirectPath, authStatus, navigate]);
-
-  if (authStatus === "unverified") {
-    return <Navigate to="/auth/verify-email" />;
-  }
 
   if (authStatus === "loading") {
     return <LoadingScreen />;

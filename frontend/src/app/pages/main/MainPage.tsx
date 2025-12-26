@@ -1,9 +1,9 @@
+import { Outlet, useMatchRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import Navbar from "../../../components/Navbar";
-import Sidebar from "./components/Sidebar";
-import { Outlet, useMatchRoute } from "@tanstack/react-router";
-import HomePage from "./pages/home/pages/HomePage";
 import useScreen from "../../../hooks/useScreen";
+import Sidebar from "./components/Sidebar";
+import HomePage from "./pages/home/pages/HomePage";
 
 const MainPage = () => {
   const matchRoute = useMatchRoute();
@@ -19,31 +19,23 @@ const MainPage = () => {
     <div className="relative min-h-screen font-stix">
       {/* Background Elements */}
       <div
-        className="fixed inset-0 -z-10"
+        className="fixed inset-0 -z-10 bg-dark-background"
         style={{
           background: `
-            linear-gradient(135deg, 
-              #000E1D 0%,
-              #00172A 50%,
-              #002137 100%
-            ),
-            radial-gradient(
-              ellipse at 20% 30%,
-              rgba(0, 40, 80, 0.15) 0%,
-              transparent 40%
-            ),
-            radial-gradient(
-              ellipse at 80% 70%,
-              rgba(0, 30, 60, 0.1) 0%,
-              transparent 40%
-            ),
-            url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2IiBoZWlnaHQ9IjYiPgo8cmVjdCB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjMDAwMDAwIiBvcGFjaXR5PSIwLjA1Ij48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDZMNiAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9IiMwMDIxMzciIHN0cm9rZS13aWR0aD0iMC4yNSIgb3BhY2l0eT0iMC4xIi8+Cjwvc3ZnPg==')
+            radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15), transparent 25%),
+            radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.15), transparent 25%),
+            linear-gradient(180deg, #0f172a 0%, #020617 100%)
           `,
-          backgroundBlendMode: "overlay",
-          boxShadow: "inset 0 0 60px rgba(0, 15, 30, 0.6)",
-          backgroundAttachment: "fixed",
         }}
-      ></div>
+      >
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+        <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-violet-500/10 via-transparent to-transparent blur-3xl transform -translate-y-1/2" />
+      </div>
 
       {/* Content */}
       <div className="relative z-10">

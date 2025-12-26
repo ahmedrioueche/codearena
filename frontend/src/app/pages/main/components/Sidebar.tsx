@@ -1,17 +1,17 @@
-import React from "react";
+import Tippy from "@tippyjs/react";
 import {
-  Home,
-  Code,
-  History,
-  BarChart2,
   Award,
-  Users,
+  BarChart2,
+  Code,
+  HelpCircle,
+  History,
+  Home,
+  LucideProps,
   MessageSquare,
   Settings,
-  HelpCircle,
+  Users,
 } from "lucide-react";
-import { LucideProps } from "lucide-react";
-import Tippy from "@tippyjs/react";
+import React from "react";
 import "tippy.js/dist/tippy.css";
 
 const Sidebar = ({
@@ -74,13 +74,13 @@ const Sidebar = ({
         className={`p-3 rounded-lg mb-2 flex items-center transition-all duration-200
           ${
             isImpl
-              ? "cursor-pointer hover:bg-light-primary/10 dark:hover:bg-dark-primary/10"
+              ? "cursor-pointer hover:bg-violet-500/10 dark:hover:bg-violet-500/20 hover:shadow-sm"
               : "cursor-auto opacity-50"
           }
           ${
             isActive && isImpl
-              ? "bg-light-primary/10 dark:bg-dark-primary/10 text-light-primary dark:text-dark-primary"
-              : "text-light-text-primary dark:text-dark-text-primary"
+              ? "bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-300 shadow-sm border border-violet-500/10"
+              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
           }`}
         onClick={handleClick}
         role={isImpl ? "button" : "none"}
@@ -116,8 +116,9 @@ const Sidebar = ({
       <div
         className={`fixed top-24 left-4 h-[calc(100vh-7rem)] w-64 rounded-xl shadow-2xl z-40 
           transform transition-all duration-300 ease-in-out 
-          border border-light-border/20 dark:border-dark-border/20
-          backdrop-blur-lg bg-light-background/80 dark:bg-dark-background/80
+          border border-light-border/10 dark:border-white/5
+          backdrop-blur-xl bg-white/70 dark:bg-[#0f172a]/70 
+          supports-[backdrop-filter]:bg-white/10 suports-[backdrop-filter]:dark:bg-[#0f172a]/50
           ${
             isCollapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0"
           }

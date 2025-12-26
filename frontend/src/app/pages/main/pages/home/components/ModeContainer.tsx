@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { GameMode } from "../../../../../../types/game/game";
 import { modes } from "../../../../../../constants/modes";
-import ModeCard from "./ModeCard";
-import SoloMatchSetupModal from "./gameSetup/SoloSetupModal";
+import { GameMode } from "../../../../../../types/game/game";
 import BattleModeSetupModal from "./gameSetup/BattleSetupModal";
 import CollabModeSetupModal from "./gameSetup/CollabSetupModal";
+import SoloMatchSetupModal from "./gameSetup/SoloSetupModal";
+import ModeCard from "./ModeCard";
 import SaveTheCodeSetup from "./SaveTheCodeSetup";
 
 const ModesContainer = () => {
@@ -20,7 +20,7 @@ const ModesContainer = () => {
           description={mode.description}
           icon={mode.icon}
           isImplemented={mode.isImplemented}
-          onStartGame={setActiveMode}
+          onStartGame={(mode) => setActiveMode(mode)}
         />
       ))}
 
