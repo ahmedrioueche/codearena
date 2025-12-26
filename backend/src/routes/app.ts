@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.post('/wake-up', () => {
+router.get('/wake-up', () => {
   console.log('Wake up');
 });
 
